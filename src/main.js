@@ -7,7 +7,11 @@ import {createTripEditEventTemplate} from "./view/trip-edit-event";
 import {createTripCreateEventTemplate} from "./view/trip-create-event";
 import {createTripEventItemTemplate} from "./view/trip-event-item";
 
+import {generateTripEvent} from "./mock/trip-event";
+
 const EVENT_COUNT = 3;
+
+const eventPoints = new Array(EVENT_COUNT).fill().map(generateTripEvent);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -29,7 +33,9 @@ const tripListEvent = tripEventsElement.querySelector(`.trip-events__list`);
 render(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate()), `afterbegin`);
 
 for (let i = 0; i < EVENT_COUNT; i++) {
-  render(tripListEvent, createTripEventItemTemplate(createTripEventTemplate()), `beforeend`);
+  render(tripListEvent, createTripEventItemTemplate(createTripEventTemplate(eventPoints[i])), `beforeend`);
 }
 
 render(tripListEvent, createTripEventItemTemplate(createTripCreateEventTemplate()), `beforeend`);
+
+console.log(generateTripEvent());

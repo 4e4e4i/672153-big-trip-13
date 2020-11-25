@@ -9,7 +9,9 @@
     "build": "webpack --mode development",
     "start": "webpack-dev-server --open"
   },
-  "dependencies": {},
+  "dependencies": {
+    "dayjs": "1.9.5"
+  },
   "devDependencies": {
     "eslint": "7.13.0",
     "eslint-config-htmlacademy": "0.6.0",
