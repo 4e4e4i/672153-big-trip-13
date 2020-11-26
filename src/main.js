@@ -4,12 +4,12 @@ import {createTripFiltersTemplate} from "./view/trip-filters";
 import {createTripSortTemplate} from "./view/trip-sort";
 import {createTripEventTemplate} from "./view/trip-event";
 import {createTripEditEventTemplate} from "./view/trip-edit-event";
-import {createTripCreateEventTemplate} from "./view/trip-create-event";
 import {createTripEventItemTemplate} from "./view/trip-event-item";
 
 import {generateTripEvent} from "./mock/trip-event";
+import {CITIES} from "./helpers/constants";
 
-const EVENT_COUNT = 3;
+const EVENT_COUNT = 15;
 
 const eventPoints = new Array(EVENT_COUNT).fill().map(generateTripEvent);
 
@@ -30,12 +30,12 @@ render(tripEventsElement, createTripSortTemplate(), `beforeend`);
 
 const tripListEvent = tripEventsElement.querySelector(`.trip-events__list`);
 
-render(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate()), `afterbegin`);
+render(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate(eventPoints[0], CITIES)), `afterbegin`);
 
 for (let i = 0; i < EVENT_COUNT; i++) {
   render(tripListEvent, createTripEventItemTemplate(createTripEventTemplate(eventPoints[i])), `beforeend`);
 }
 
-render(tripListEvent, createTripEventItemTemplate(createTripCreateEventTemplate()), `beforeend`);
+render(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate({}, CITIES, `CREATE`)), `beforeend`);
 
-console.log(generateTripEvent());
+

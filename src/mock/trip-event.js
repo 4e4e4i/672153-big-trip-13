@@ -1,4 +1,4 @@
-import { EVENT_TYPES } from "../constants/event-types";
+import { EVENT_TYPES, CITIES } from "../helpers/constants";
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -7,51 +7,59 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const cities = [`Tokio`, `Kioto`, `Osaka`, `Nagoya`, `Saporo`];
-
 const ADDITIONAL_OFFERS = {
   FLIGHT: [
     {
+      type: `luggage`,
       name: `Add luggage`,
       price: 50,
     },
     {
+      type: `comfort`,
       name: `Switch to comfort`,
       price: 80
     },
     {
+      type: `meal`,
       name: `Add meal`,
       price: 15
     },
     {
+      type: `seats`,
       name: `Choose seats`,
       price: 5
     }
   ],
   SHIP: [
     {
+      type: `luggage`,
       name: `Add luggage`,
       price: 50
     },
     {
+      type: `comfort`,
       name: `Switch to comfort`,
       price: 80
     },
     {
+      type: `meal`,
       name: `Add meal`,
       price: 15
     },
   ],
   TRAIN: [
     {
+      type: `comfort`,
       name: `Switch to comfort`,
       price: 80
     },
     {
+      type: `meal`,
       name: `Add meal`,
       price: 15
     },
     {
+      type: `seats`,
       name: `Choose seats`,
       price: 5
     }
@@ -87,12 +95,8 @@ const getRandomKey = (obj) => {
   return types[getRandomInteger(0, types.length - 1)];
 };
 
-const getRandomPicture = () => {
-  return `http://picsum.photos/248/152?r=${Math.random()}`;
-};
-
-const getRandomArray = (maxLength, callback) => {
-  return Array(getRandomInteger(1, maxLength)).fill().map(() => callback);
+const getRandomPictures = () => {
+  return Array(getRandomInteger(1, 5)).fill().map(() => `http://picsum.photos/248/152?r=${getRandomInteger(1, 5)}`);
 };
 
 const getOffersPrice = (offers) => {
@@ -118,16 +122,19 @@ export const generateTripEvent = () => {
   const eventPrice = getRandomInteger(10, 200)
 
   return {
+    id: 1,
     type: randomEventType,
-    city: cities[getRandomInteger(0, cities.length - 1)],
+    destination: {
+      name: CITIES[getRandomInteger(0, CITIES.length - 1)],
+      description: getRandomDescription(),
+      photos: getRandomPictures(),
+    },
     startTime,
     endTime,
     offers,
     isFavorite: Boolean(getRandomInteger()),
     price: eventPrice,
-    totalPrice: getFullPrice(eventPrice, offersPrice),
-    photos: getRandomArray(7, getRandomPicture()),
-    description: getRandomDescription()
+    totalPrice: getFullPrice(eventPrice, offersPrice)
   };
 };
 

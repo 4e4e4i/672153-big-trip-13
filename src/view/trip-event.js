@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {numberPad} from "../utils/number-pad";
-import {EVENT_TYPES} from "../constants/event-types";
+import {EVENT_TYPES} from "../helpers/constants";
 
 const createTripEventOffersTemplate = (offers) => {
   if (!offers.length) {
@@ -20,6 +20,7 @@ const createTripEventOffersTemplate = (offers) => {
   }
 
   return `
+    <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
       ${fragment}
     </ul>
@@ -27,7 +28,7 @@ const createTripEventOffersTemplate = (offers) => {
 };
 
 export const createTripEventTemplate = (event) => {
-  const {type, city, startTime, endTime, price, isFavorite, offers} = event;
+  const {type, destination, startTime, endTime, price, isFavorite, offers} = event;
 
   const eventType = EVENT_TYPES[type];
   const checkedOffers = offers.filter((offer) => offer.isChecked);
@@ -75,7 +76,7 @@ export const createTripEventTemplate = (event) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${eventType.toLowerCase()}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${eventType} ${city}</h3>
+      <h3 class="event__title">${eventType} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${startTimeAttribute}">${startTimeFormatted}</time>
@@ -87,7 +88,6 @@ export const createTripEventTemplate = (event) => {
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${price}</span>
       </p>
-      <h4 class="visually-hidden">Offers:</h4>
       ${createTripEventOffersTemplate(checkedOffers)}
       <button class="${favoriteClassName}" type="button">
         <span class="visually-hidden">Add to favorite</span>
