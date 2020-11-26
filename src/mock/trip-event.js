@@ -1,4 +1,4 @@
-import { EVENT_TYPES, CITIES } from "../helpers/constants";
+import {EVENT_TYPES, CITIES} from "../helpers/constants";
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -77,7 +77,7 @@ const getRandomDescription = () => {
 
 const getRandomDuration = () => {
   const startTime = +new Date(+(new Date()) - Math.floor(Math.random() * 10000000000));
-  const maxEndTime = +new Date(startTime).setHours(42)
+  const maxEndTime = +new Date(startTime).setHours(42);
   const endTime = +new Date(startTime + Math.random() * (maxEndTime - startTime));
   return {
     startTime,
@@ -86,8 +86,8 @@ const getRandomDuration = () => {
 };
 
 const getOffers = (eventType) => {
-  const additionalOffers = ADDITIONAL_OFFERS[eventType] ? ADDITIONAL_OFFERS[eventType] : []
-  return additionalOffers.map((item) => ({...item, isChecked: Boolean(getRandomInteger())}));
+  const additionalOffers = ADDITIONAL_OFFERS[eventType] ? ADDITIONAL_OFFERS[eventType] : [];
+  return additionalOffers.map((item) => (Object.assign({}, item, {isChecked: Boolean(getRandomInteger())})));
 };
 
 const getRandomKey = (obj) => {
@@ -101,25 +101,25 @@ const getRandomPictures = () => {
 
 const getOffersPrice = (offers) => {
   if (!offers.length) {
-    return 0
+    return 0;
   } else {
-   return offers.reduce((acc, { price }) => {
-     acc += price
-     return acc
-   }, 0)
+    return offers.reduce((acc, {price}) => {
+      acc += price;
+      return acc;
+    }, 0);
   }
-}
+};
 
 const getFullPrice = (price, offersPrice) => {
-  return price + offersPrice
-}
+  return price + offersPrice;
+};
 
 export const generateTripEvent = () => {
   const {startTime, endTime} = getRandomDuration();
   const randomEventType = getRandomKey(EVENT_TYPES);
-  const offers = getOffers(randomEventType)
-  const offersPrice = getOffersPrice(offers)
-  const eventPrice = getRandomInteger(10, 200)
+  const offers = getOffers(randomEventType);
+  const offersPrice = getOffersPrice(offers);
+  const eventPrice = getRandomInteger(10, 200);
 
   return {
     id: 1,
