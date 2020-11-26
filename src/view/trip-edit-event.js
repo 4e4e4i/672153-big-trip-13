@@ -32,11 +32,12 @@ const createOffersFormTemplate = (availableOffers, id) => {
   if (!availableOffers.length) {
     return ``;
   }
-  let fragment = ``;
-  for (const offer of availableOffers) {
+
+  const offersSelectorsFragments = availableOffers.map((offer) => {
     const {type: offerType, name: offerName, price: offerPrice, isChecked: isOfferChecked} = offer;
     const isChecked = isOfferChecked ? `checked` : ``;
-    fragment += `
+
+    return `
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerType}-${id}" type="checkbox" name="event-offer-${offerType}" ${isChecked}>
         <label class="event__offer-label" for="event-offer-${offerType}-${id}">
@@ -46,14 +47,14 @@ const createOffersFormTemplate = (availableOffers, id) => {
         </label>
       </div>
     `;
-  }
+  }).join(``);
 
   return `
       <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-             ${fragment}
+             ${offersSelectorsFragments}
           </div>
         </section>
     `;
@@ -63,16 +64,11 @@ const createPhotosTapeTemplate = (photos = []) => {
   if (!photos.length) {
     return ``;
   }
-  let fragment = ``;
-  for (const photoUrl of photos) {
-    fragment += `
-        <img class="event__photo" src="${photoUrl}" alt="Event photo">
-      `;
-  }
+
   return `
       <div class="event__photos-container">
         <div class="event__photos-tape">
-          ${fragment}
+          ${photos.map((photoUrl) => `<img class="event__photo" src="${photoUrl}" alt="Event photo">`).join(``)}
         </div>
       </div>
     `;

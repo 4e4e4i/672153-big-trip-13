@@ -11,7 +11,49 @@ import {CITIES} from "./helpers/constants";
 
 const EVENT_COUNT = 15;
 
-const eventPoints = new Array(EVENT_COUNT).fill().map(generateTripEvent);
+const state = {
+  tabs: [
+    {
+      name: `Table`,
+      url: `#`,
+      isActive: true
+    },
+    {
+      name: `Stats`,
+      url: `#`,
+      isActive: false
+    }
+  ],
+
+  activeSort: `day`,
+
+  activeFilter: ``,
+
+  eventPoints: [],
+
+  tripInfo: {}
+};
+
+const generatedEventPoints = new Array(EVENT_COUNT).fill().map(generateTripEvent);
+state.eventPoints = generatedEventPoints;
+
+
+const getSortedEventsByDay = (events) => [...events].sort(({startTime}) => startTime);
+const getTotalPrice = (events) => events.reduce((acc, {totalPrice}) => acc + totalPrice, 0);
+const getVisitedCities = (events) => events.map(({destination: {name}}) => name);
+
+const calculateTripInfo = (eventPoints) => {
+  const sortedEventsByDay = getSortedEventsByDay(eventPoints);
+
+  return {
+    cities: getVisitedCities(eventPoints),
+    startTime: sortedEventsByDay[0].startTime,
+    endTime: sortedEventsByDay[sortedEventsByDay.length - 1].endTime,
+    totalPrice: getTotalPrice(eventPoints)
+  };
+};
+
+state.tripInfo = calculateTripInfo(state.eventPoints);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -23,17 +65,17 @@ const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
-render(tripMainElement, createTripInfoTemplate(), `afterbegin`);
-render(tripControlsElement, createTripTabsTemplate(), `afterbegin`);
-render(tripControlsElement, createTripFiltersTemplate(), `beforeend`);
-render(tripEventsElement, createTripSortTemplate(), `beforeend`);
+render(tripMainElement, createTripInfoTemplate(state.tripInfo), `afterbegin`);
+render(tripControlsElement, createTripTabsTemplate(state.tabs), `afterbegin`);
+render(tripControlsElement, createTripFiltersTemplate(state.activeFilter), `beforeend`);
+render(tripEventsElement, createTripSortTemplate(state.activeSort), `beforeend`);
 
 const tripListEvent = tripEventsElement.querySelector(`.trip-events__list`);
 
-render(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate(eventPoints[0], CITIES)), `afterbegin`);
+render(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate(state.eventPoints[0], CITIES)), `afterbegin`);
 
 for (let i = 0; i < EVENT_COUNT; i++) {
-  render(tripListEvent, createTripEventItemTemplate(createTripEventTemplate(eventPoints[i])), `beforeend`);
+  render(tripListEvent, createTripEventItemTemplate(createTripEventTemplate(state.eventPoints[i])), `beforeend`);
 }
 
 render(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate({}, CITIES, `CREATE`)), `beforeend`);

@@ -17,10 +17,4 @@ export const FILTERS_TYPES = {
   PAST: `past`
 };
 
-export const SORT_TYPES = {
-  EVENT: `sort-event`,
-  TIME: `sort-time`,
-  PRICE: `sort-price`
-};
-
 export const CITIES = [`Tokio`, `Kioto`, `Osaka`, `Nagoya`, `Saporo`];

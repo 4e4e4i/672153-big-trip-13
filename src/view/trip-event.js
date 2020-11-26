@@ -6,23 +6,17 @@ const createTripEventOffersTemplate = (offers) => {
   if (!offers.length) {
     return ``;
   }
-  let fragment = ``;
-
-  for (const offer of offers) {
-    const {price, name} = offer;
-    fragment += `
-      <li class="event__offer">
-        <span class="event__offer-title">${name}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
-      </li>
-    `;
-  }
 
   return `
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${fragment}
+      ${offers.map(({price, name}) => `
+        <li class="event__offer">
+          <span class="event__offer-title">${name}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${price}</span>
+        </li>
+      `).join(``)}
     </ul>
   `;
 };
