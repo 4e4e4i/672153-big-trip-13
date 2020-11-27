@@ -8,6 +8,7 @@ import {createTripEventItemTemplate} from "./view/trip-event-item";
 
 import {generateTripEvent} from "./mock/trip-event";
 import {CITIES} from "./helpers/constants";
+import {getSortedByElementKey} from "./utils/get-sorted-by-element-key";
 
 const EVENT_COUNT = 15;
 
@@ -34,26 +35,25 @@ const state = {
   tripInfo: {}
 };
 
-const generatedEventPoints = new Array(EVENT_COUNT).fill().map(generateTripEvent);
+const generatedEventPoints = Array.from({length: EVENT_COUNT}).map(generateTripEvent);
 state.eventPoints = generatedEventPoints;
 
-
-const getSortedEventsByDay = (events) => [...events].sort(({startTime}) => startTime);
 const getTotalPrice = (events) => events.reduce((acc, {totalPrice}) => acc + totalPrice, 0);
 const getVisitedCities = (events) => events.map(({destination: {name}}) => name);
 
 const calculateTripInfo = (eventPoints) => {
-  const sortedEventsByDay = getSortedEventsByDay(eventPoints);
-
+  const sortedEventsByStartTime = getSortedByElementKey(eventPoints, `startTime`);
   return {
     cities: getVisitedCities(eventPoints),
-    startTime: sortedEventsByDay[0].startTime,
-    endTime: sortedEventsByDay[sortedEventsByDay.length - 1].endTime,
+    startTime: sortedEventsByStartTime[0].startTime,
+    endTime: sortedEventsByStartTime[sortedEventsByStartTime.length - 1].endTime,
     totalPrice: getTotalPrice(eventPoints)
   };
 };
 
-state.tripInfo = calculateTripInfo(state.eventPoints);
+if (state.eventPoints.length) {
+  state.tripInfo = calculateTripInfo(state.eventPoints);
+}
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -65,7 +65,9 @@ const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
-render(tripMainElement, createTripInfoTemplate(state.tripInfo), `afterbegin`);
+if (Object.values(state.tripInfo).some(Boolean)) {
+  render(tripMainElement, createTripInfoTemplate(state.tripInfo), `afterbegin`);
+}
 render(tripControlsElement, createTripTabsTemplate(state.tabs), `afterbegin`);
 render(tripControlsElement, createTripFiltersTemplate(state.activeFilter), `beforeend`);
 render(tripEventsElement, createTripSortTemplate(state.activeSort), `beforeend`);

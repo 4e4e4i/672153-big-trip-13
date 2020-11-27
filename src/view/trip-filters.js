@@ -1,5 +1,5 @@
-import {FILTERS_TYPES} from "../helpers/constants";
-const filterList = Object.values(FILTERS_TYPES);
+import {FilterType} from "../helpers/constants";
+const filterList = Object.values(FilterType);
 
 export const createTripFiltersTemplate = (activeFilter = ``) => {
   return `

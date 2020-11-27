@@ -1,4 +1,4 @@
-import {EVENT_TYPES, CITIES} from "../helpers/constants";
+import {EventType, CITIES} from "../helpers/constants";
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -116,7 +116,7 @@ const getFullPrice = (price, offersPrice) => {
 
 export const generateTripEvent = () => {
   const {startTime, endTime} = getRandomDuration();
-  const randomEventType = getRandomKey(EVENT_TYPES);
+  const randomEventType = getRandomKey(EventType);
   const offers = getOffers(randomEventType);
   const offersPrice = getOffersPrice(offers);
   const eventPrice = getRandomInteger(10, 200);

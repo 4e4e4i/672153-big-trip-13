@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {numberPad} from "../utils/number-pad";
-import {EVENT_TYPES} from "../helpers/constants";
+import {EventType} from "../helpers/constants";
 
 const createTripEventOffersTemplate = (offers) => {
   if (!offers.length) {
@@ -24,7 +24,7 @@ const createTripEventOffersTemplate = (offers) => {
 export const createTripEventTemplate = (event) => {
   const {type, destination, startTime, endTime, price, isFavorite, offers} = event;
 
-  const eventType = EVENT_TYPES[type];
+  const eventType = EventType[type];
   const checkedOffers = offers.filter((offer) => offer.isChecked);
   const startDate = dayjs(startTime);
   const endDate = dayjs(endTime);

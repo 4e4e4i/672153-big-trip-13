@@ -1,4 +1,4 @@
-export const EVENT_TYPES = {
+export const EventType = {
   TAXI: `Taxi`,
   BUS: `Bus`,
   TRAIN: `Train`,
@@ -11,7 +11,7 @@ export const EVENT_TYPES = {
   RESTAURANT: `Restaurant`
 };
 
-export const FILTERS_TYPES = {
+export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
   PAST: `past`

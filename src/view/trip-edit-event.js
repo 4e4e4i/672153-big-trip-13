@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import {EVENT_TYPES} from "../helpers/constants";
-const eventsList = Object.values(EVENT_TYPES);
+import {EventType} from "../helpers/constants";
+const eventsList = Object.values(EventType);
 
 const createEventsLabelsListTemplate = (type, id) => {
   if (!eventsList.length) {
@@ -124,7 +124,7 @@ export const createTripEditEventTemplate = (event = {}, cities = [], mode = `EDI
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${EVENT_TYPES[type].toLowerCase()}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${EventType[type].toLowerCase()}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -133,7 +133,7 @@ export const createTripEditEventTemplate = (event = {}, cities = [], mode = `EDI
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-${id}">
-            ${EVENT_TYPES[type]}
+            ${EventType[type]}
           </label>
           ${createCitiesInputTemplate(eventDestination.name, cities, id)}
         </div>
