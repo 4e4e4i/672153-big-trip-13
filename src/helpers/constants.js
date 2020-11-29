@@ -20,6 +20,7 @@ export const FilterType = {
 export const CITIES = [`Tokio`, `Kioto`, `Osaka`, `Nagoya`, `Saporo`];
 
 export const RenderPosition = {
+  BEFOREBEGIN: `beforebegin`,
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`
 };

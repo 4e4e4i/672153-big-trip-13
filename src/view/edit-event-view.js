@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import {EventType} from "../helpers/constants";
+import {createElement} from "../helpers/utils/dom-helpers";
 const eventsList = Object.values(EventType);
 
 const createEventsLabelsListTemplate = (type, id) => {
@@ -99,7 +100,7 @@ const createCitiesInputTemplate = (selectedCity, cities, id) => {
   `;
 };
 
-export const createTripEditEventTemplate = (event = {}, cities = [], mode = `EDIT`) => {
+export const createTripEditEventTemplate = (event, cities, mode) => {
   const {
     type = `TAXI`,
     destination: eventDestination = {
@@ -118,8 +119,8 @@ export const createTripEditEventTemplate = (event = {}, cities = [], mode = `EDI
   const startTimeFormatted = dayjs(startTime).format(`DD/MM/YY HH:mm`);
   const endTimeFormatted = dayjs(endTime).format(`DD/MM/YY HH:mm`);
 
-  return `
-    <form class="event event--edit" action="#" method="post">
+  return (
+    `<form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -167,6 +168,31 @@ export const createTripEditEventTemplate = (event = {}, cities = [], mode = `EDI
         ${createOffersFormTemplate(offers, id)}
         ${createdEventDestinationTemplate(eventDestination)}
       </section>
-    </form>
-  `;
+    </form>`
+  );
 };
+
+export default class EditEventView {
+  constructor(event = {}, cities = [], mode = `EDIT`) {
+    this._event = event;
+    this._cities = cities;
+    this._mode = mode;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEditEventTemplate(this._event, this._cities, this._mode);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = this.getTemplate();
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

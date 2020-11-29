@@ -21,3 +21,8 @@ export const createElement = (template) => {
 
   return newElement.firstChild;
 };
+
+export const createHiddenTitle = ({text, level}, element, place) => {
+  const title = `<h${level} class="visually-hidden">${text}</h${level}>`;
+  renderTemplate(element, title, place);
+};

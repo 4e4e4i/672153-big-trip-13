@@ -1,15 +1,42 @@
-import {createTripInfoTemplate} from "./view/trip-info";
-import {createTripTabsTemplate} from "./view/trip-tabs";
-import {createTripFiltersTemplate} from "./view/trip-filters";
-import {createTripSortTemplate} from "./view/trip-sort";
-import {createTripEventTemplate} from "./view/trip-event";
-import {createTripEditEventTemplate} from "./view/trip-edit-event";
-import {createTripEventItemTemplate} from "./view/trip-event-item";
+import InfoView from "./view/info-view";
+import TabsView from "./view/tabs-view";
+import FiltersView from "./view/filters-view";
+import SortView from "./view/sort-view";
+import EventView from "./view/event-view";
+import EditEventView from "./view/edit-event-view";
+import EventItemView from "./view/event-item-view";
+import EventListView from "./view/event-list-view";
+import TripMessageView from "./view/trip-message-view";
 
 import {generateTripEvent} from "./mock/trip-event";
-import {CITIES, RenderPosition} from "./helpers/constants";
+import {CITIES, FilterType, RenderPosition} from "./helpers/constants";
 import {getSortedByElementKey} from "./helpers/utils/get-sorted-by-element-key";
-import {renderTemplate} from "./helpers/utils/dom-helpers";
+import {renderElement, createHiddenTitle} from "./helpers/utils/dom-helpers";
+
+const filterList = Object.values(FilterType);
+
+const sortList = [
+  {
+    name: `day`,
+    isDisabled: false,
+  },
+  {
+    name: `event`,
+    isDisabled: true,
+  },
+  {
+    name: `time`,
+    isDisabled: false,
+  },
+  {
+    name: `price`,
+    isDisabled: false,
+  },
+  {
+    name: `offers`,
+    isDisabled: true
+  }
+];
 
 const EVENT_COUNT = 15;
 
@@ -62,21 +89,34 @@ const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
-if (Object.values(state.tripInfo).some(Boolean)) {
-  renderTemplate(tripMainElement, createTripInfoTemplate(state.tripInfo), RenderPosition.AFTERBEGIN);
-}
-renderTemplate(tripControlsElement, createTripTabsTemplate(state.tabs), RenderPosition.AFTERBEGIN);
-renderTemplate(tripControlsElement, createTripFiltersTemplate(state.activeFilter), RenderPosition.BEFOREEND);
-renderTemplate(tripEventsElement, createTripSortTemplate(state.activeSort), RenderPosition.BEFOREEND);
-
-const tripListEvent = tripEventsElement.querySelector(`.trip-events__list`);
-
-renderTemplate(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate(state.eventPoints[0], CITIES)), RenderPosition.AFTERBEGIN);
-
-for (let i = 0; i < EVENT_COUNT; i++) {
-  renderTemplate(tripListEvent, createTripEventItemTemplate(createTripEventTemplate(state.eventPoints[i])), RenderPosition.BEFOREEND);
+if (Object.values(state.tripInfo).some(Boolean) || state.eventPoints.length) {
+  renderElement(tripMainElement, new InfoView(state.tripInfo).getElement(), RenderPosition.AFTERBEGIN);
 }
 
-renderTemplate(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate({}, CITIES, `CREATE`)), RenderPosition.BEFOREEND);
+const tripTabsElement = new TabsView(state.tabs).getElement();
+const tripFiltersElement = new FiltersView(filterList, state.activeFilter).getElement();
+renderElement(tripControlsElement, tripTabsElement, RenderPosition.AFTERBEGIN);
+createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderPosition.BEFOREBEGIN);
+renderElement(tripControlsElement, tripFiltersElement, RenderPosition.BEFOREEND);
+createHiddenTitle({text: `Filter events`, level: 2}, tripFiltersElement, RenderPosition.BEFOREBEGIN);
+
+createHiddenTitle({text: `Trip events`, level: 2}, tripEventsElement, RenderPosition.AFTERBEGIN);
+if (state.eventPoints.length) {
+  renderElement(tripEventsElement, new SortView(sortList, state.activeSort).getElement(), RenderPosition.BEFOREEND);
+  renderElement(tripEventsElement, new EventListView().getElement(), RenderPosition.BEFOREEND);
+  const tripEventListView = tripEventsElement.querySelector(`.trip-events__list`);
+  const tripEventItemElement = (slot) => new EventItemView(slot).getElement();
+
+  renderElement(tripEventListView, tripEventItemElement(new EditEventView(state.eventPoints[0], CITIES).getElement()), RenderPosition.AFTERBEGIN);
+
+  for (let i = 0; i < EVENT_COUNT; i++) {
+    renderElement(tripEventListView, tripEventItemElement(new EventView(state.eventPoints[i]).getElement()), RenderPosition.BEFOREEND);
+  }
+
+  renderElement(tripEventListView, tripEventItemElement(new EditEventView({}, CITIES, `CREATE`).getElement()), RenderPosition.BEFOREEND);
+} else {
+  const emptyMessage = `Click New Event to create your first point`;
+  renderElement(tripEventsElement, new TripMessageView(emptyMessage).getElement(), RenderPosition.BEFOREEND);
+}
 
 
