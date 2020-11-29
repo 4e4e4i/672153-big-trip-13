@@ -13,6 +13,42 @@ import {CITIES, FilterType, RenderPosition} from "./helpers/constants";
 import {getSortedByElementKey} from "./helpers/utils/get-sorted-by-element-key";
 import {render, createHiddenTitle} from "./helpers/utils/dom-helpers";
 
+const renderEvent = (eventList, event) => {
+  const tripEventItemElement = (slot) => new EventItemView(slot);
+  const eventView = tripEventItemElement(new EventView(event).getElement());
+  const eventEditView = tripEventItemElement(new EditEventView(event, CITIES).getElement());
+
+  const replaceEventToForm = () => {
+    eventView.getElement().replaceWith(eventEditView.getElement());
+  };
+
+  const replaceFormToEvent = () => {
+    eventEditView.getElement().replaceWith(eventView.getElement());
+  };
+
+  const onEscKeyDown = (evt) => {
+    evt.preventDefault();
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      replaceFormToEvent();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  eventView.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceEventToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
+
+  eventEditView.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, replaceFormToEvent);
+  eventEditView.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceFormToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  });
+
+  render(eventList, eventView.getElement(), RenderPosition.BEFOREEND);
+};
+
 const filterList = Object.values(FilterType);
 
 const sortList = [
@@ -56,7 +92,7 @@ const state = {
 
   activeSort: `day`,
 
-  activeFilter: ``,
+  activeFilter: `everything`,
 
   eventPoints: [],
 
@@ -102,18 +138,13 @@ createHiddenTitle({text: `Filter events`, level: 2}, tripFiltersElement, RenderP
 
 createHiddenTitle({text: `Trip events`, level: 2}, tripEventsElement, RenderPosition.AFTERBEGIN);
 if (state.eventPoints.length) {
+  const eventListComponent = new EventListView();
   render(tripEventsElement, new SortView(sortList, state.activeSort).getElement(), RenderPosition.BEFOREEND);
-  render(tripEventsElement, new EventListView().getElement(), RenderPosition.BEFOREEND);
-  const tripEventListView = tripEventsElement.querySelector(`.trip-events__list`);
-  const tripEventItemElement = (slot) => new EventItemView(slot).getElement();
-
-  render(tripEventListView, tripEventItemElement(new EditEventView(state.eventPoints[0], CITIES).getElement()), RenderPosition.AFTERBEGIN);
+  render(tripEventsElement, eventListComponent.getElement(), RenderPosition.BEFOREEND);
 
   for (let i = 0; i < EVENT_COUNT; i++) {
-    render(tripEventListView, tripEventItemElement(new EventView(state.eventPoints[i]).getElement()), RenderPosition.BEFOREEND);
+    renderEvent(eventListComponent.getElement(), state.eventPoints[i]);
   }
-
-  render(tripEventListView, tripEventItemElement(new EditEventView({}, CITIES, `CREATE`).getElement()), RenderPosition.BEFOREEND);
 } else {
   const emptyMessage = `Click New Event to create your first point`;
   render(tripEventsElement, new TripMessageView(emptyMessage).getElement(), RenderPosition.BEFOREEND);

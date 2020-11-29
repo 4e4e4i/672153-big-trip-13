@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import {EventType} from "../helpers/constants";
-import {createElement} from "../helpers/utils/dom-helpers";
 const eventsList = Object.values(EventType);
 
 const createEventsLabelsListTemplate = (type, id) => {
@@ -156,7 +155,7 @@ export const createTripEditEventTemplate = (event, cities, mode) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${isEditForm() ? `Cancel` : `Delete`}</button>
+        <button class="event__reset-btn" type="reset">${isEditForm() ? `Delete` : `Cancel`}</button>
 
         ${isEditForm() ? `
           <button class="event__rollup-btn" type="button">

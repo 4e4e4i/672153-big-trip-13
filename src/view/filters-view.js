@@ -1,4 +1,3 @@
-import {FilterType} from "../helpers/constants";
 import {createElement} from "../helpers/utils/dom-helpers";
 
 const createTripFiltersTemplate = (filterList, activeFilter = ``) => {
