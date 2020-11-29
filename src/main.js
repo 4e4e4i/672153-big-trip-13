@@ -7,8 +7,9 @@ import {createTripEditEventTemplate} from "./view/trip-edit-event";
 import {createTripEventItemTemplate} from "./view/trip-event-item";
 
 import {generateTripEvent} from "./mock/trip-event";
-import {CITIES} from "./helpers/constants";
-import {getSortedByElementKey} from "./utils/get-sorted-by-element-key";
+import {CITIES, RenderPosition} from "./helpers/constants";
+import {getSortedByElementKey} from "./helpers/utils/get-sorted-by-element-key";
+import {renderTemplate} from "./helpers/utils/dom-helpers";
 
 const EVENT_COUNT = 15;
 
@@ -55,10 +56,6 @@ if (state.eventPoints.length) {
   state.tripInfo = calculateTripInfo(state.eventPoints);
 }
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
 const siteMainElement = document.querySelector(`.page-main`);
 const siteHeaderElement = document.querySelector(`.page-header`);
 const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
@@ -66,20 +63,20 @@ const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
 if (Object.values(state.tripInfo).some(Boolean)) {
-  render(tripMainElement, createTripInfoTemplate(state.tripInfo), `afterbegin`);
+  renderTemplate(tripMainElement, createTripInfoTemplate(state.tripInfo), RenderPosition.AFTERBEGIN);
 }
-render(tripControlsElement, createTripTabsTemplate(state.tabs), `afterbegin`);
-render(tripControlsElement, createTripFiltersTemplate(state.activeFilter), `beforeend`);
-render(tripEventsElement, createTripSortTemplate(state.activeSort), `beforeend`);
+renderTemplate(tripControlsElement, createTripTabsTemplate(state.tabs), RenderPosition.AFTERBEGIN);
+renderTemplate(tripControlsElement, createTripFiltersTemplate(state.activeFilter), RenderPosition.BEFOREEND);
+renderTemplate(tripEventsElement, createTripSortTemplate(state.activeSort), RenderPosition.BEFOREEND);
 
 const tripListEvent = tripEventsElement.querySelector(`.trip-events__list`);
 
-render(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate(state.eventPoints[0], CITIES)), `afterbegin`);
+renderTemplate(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate(state.eventPoints[0], CITIES)), RenderPosition.AFTERBEGIN);
 
 for (let i = 0; i < EVENT_COUNT; i++) {
-  render(tripListEvent, createTripEventItemTemplate(createTripEventTemplate(state.eventPoints[i])), `beforeend`);
+  renderTemplate(tripListEvent, createTripEventItemTemplate(createTripEventTemplate(state.eventPoints[i])), RenderPosition.BEFOREEND);
 }
 
-render(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate({}, CITIES, `CREATE`)), `beforeend`);
+renderTemplate(tripListEvent, createTripEventItemTemplate(createTripEditEventTemplate({}, CITIES, `CREATE`)), RenderPosition.BEFOREEND);
 
 
