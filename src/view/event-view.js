@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import {numberPad} from "../helpers/utils/number-pad";
 import {EventType} from "../helpers/constants";
-import {createElement} from "../helpers/utils/dom-helpers";
 
 const createTripEventOffersTemplate = (offers) => {
   if (!offers.length) {
