@@ -125,7 +125,7 @@ const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
-if (Object.values(state.tripInfo).some(Boolean) || state.eventPoints.length) {
+if (Object.values(state.tripInfo).some(Boolean)) {
   render(tripMainElement, new InfoView(state.tripInfo).getElement(), RenderPosition.AFTERBEGIN);
 }
 
