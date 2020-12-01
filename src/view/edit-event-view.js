@@ -1,13 +1,13 @@
 import dayjs from "dayjs";
 import {EventType} from "../helpers/constants";
-const eventsList = Object.values(EventType);
+const EVENTS = Object.values(EventType);
 
 const createEventsLabelsListTemplate = (type, id) => {
-  if (!eventsList.length) {
+  if (!EVENTS.length) {
     return ``;
   }
 
-  const eventsItems = eventsList.map((eventType) => {
+  const eventsItems = EVENTS.map((eventType) => {
     const eventTypeLowerCase = eventType.toLowerCase();
     const isChecked = type.toLowerCase() === eventTypeLowerCase ? `checked` : ``;
     return `

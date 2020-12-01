@@ -18,61 +18,38 @@ const renderEvent = (eventList, event) => {
   const eventView = tripEventItemElement(new EventView(event).getElement());
   const eventEditView = tripEventItemElement(new EditEventView(event, CITIES).getElement());
 
-  const replaceEventToForm = () => {
+  const switchEventToForm = () => {
     eventView.getElement().replaceWith(eventEditView.getElement());
   };
 
-  const replaceFormToEvent = () => {
+  const switchFormToEvent = () => {
     eventEditView.getElement().replaceWith(eventView.getElement());
   };
 
   const onEscKeyDown = (evt) => {
     evt.preventDefault();
     if (evt.key === `Escape` || evt.key === `Esc`) {
-      replaceFormToEvent();
+      switchFormToEvent();
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
 
   eventView.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
-    replaceEventToForm();
+    switchEventToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditView.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, replaceFormToEvent);
+  eventEditView.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, switchFormToEvent);
   eventEditView.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
     evt.preventDefault();
-    replaceFormToEvent();
+    switchFormToEvent();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   render(eventList, eventView.getElement(), RenderPosition.BEFOREEND);
 };
 
-const filterList = Object.values(FilterType);
-
-const sortList = [
-  {
-    name: `day`,
-    isDisabled: false,
-  },
-  {
-    name: `event`,
-    isDisabled: true,
-  },
-  {
-    name: `time`,
-    isDisabled: false,
-  },
-  {
-    name: `price`,
-    isDisabled: false,
-  },
-  {
-    name: `offers`,
-    isDisabled: true
-  }
-];
+const FILTERS = Object.values(FilterType);
 
 const EVENT_COUNT = 15;
 
@@ -96,7 +73,30 @@ const state = {
 
   eventPoints: [],
 
-  tripInfo: {}
+  tripInfo: {},
+
+  sortItems: [
+    {
+      name: `day`,
+      isDisabled: false,
+    },
+    {
+      name: `event`,
+      isDisabled: true,
+    },
+    {
+      name: `time`,
+      isDisabled: false,
+    },
+    {
+      name: `price`,
+      isDisabled: false,
+    },
+    {
+      name: `offers`,
+      isDisabled: true
+    }
+  ]
 };
 
 const generatedEventPoints = Array.from({length: EVENT_COUNT}).map(generateTripEvent);
@@ -130,7 +130,7 @@ if (Object.values(state.tripInfo).some(Boolean)) {
 }
 
 const tripTabsElement = new TabsView(state.tabs).getElement();
-const tripFiltersElement = new FiltersView(filterList, state.activeFilter).getElement();
+const tripFiltersElement = new FiltersView(FILTERS, state.activeFilter).getElement();
 render(tripControlsElement, tripTabsElement, RenderPosition.AFTERBEGIN);
 createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderPosition.BEFOREBEGIN);
 render(tripControlsElement, tripFiltersElement, RenderPosition.BEFOREEND);
@@ -139,7 +139,7 @@ createHiddenTitle({text: `Filter events`, level: 2}, tripFiltersElement, RenderP
 createHiddenTitle({text: `Trip events`, level: 2}, tripEventsElement, RenderPosition.AFTERBEGIN);
 if (state.eventPoints.length) {
   const eventListComponent = new EventListView();
-  render(tripEventsElement, new SortView(sortList, state.activeSort).getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, new SortView(state.sortItems, state.activeSort).getElement(), RenderPosition.BEFOREEND);
   render(tripEventsElement, eventListComponent.getElement(), RenderPosition.BEFOREEND);
 
   for (let i = 0; i < EVENT_COUNT; i++) {
