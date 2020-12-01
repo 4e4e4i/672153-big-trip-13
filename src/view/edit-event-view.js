@@ -1,13 +1,13 @@
 import dayjs from "dayjs";
 import {EventType} from "../helpers/constants";
-const eventsList = Object.values(EventType);
+const EVENTS = Object.values(EventType);
 
 const createEventsLabelsListTemplate = (type, id) => {
-  if (!eventsList.length) {
+  if (!EVENTS.length) {
     return ``;
   }
 
-  const eventsItems = eventsList.map((eventType) => {
+  const eventsItems = EVENTS.map((eventType) => {
     const eventTypeLowerCase = eventType.toLowerCase();
     const isChecked = type.toLowerCase() === eventTypeLowerCase ? `checked` : ``;
     return `
@@ -99,7 +99,7 @@ const createCitiesInputTemplate = (selectedCity, cities, id) => {
   `;
 };
 
-export const createTripEditEventTemplate = (event = {}, cities = [], mode = `EDIT`) => {
+export const createTripEditEventTemplate = (event, cities, mode) => {
   const {
     type = `TAXI`,
     destination: eventDestination = {
@@ -118,8 +118,8 @@ export const createTripEditEventTemplate = (event = {}, cities = [], mode = `EDI
   const startTimeFormatted = dayjs(startTime).format(`DD/MM/YY HH:mm`);
   const endTimeFormatted = dayjs(endTime).format(`DD/MM/YY HH:mm`);
 
-  return `
-    <form class="event event--edit" action="#" method="post">
+  return (
+    `<form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -155,7 +155,7 @@ export const createTripEditEventTemplate = (event = {}, cities = [], mode = `EDI
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${isEditForm() ? `Cancel` : `Delete`}</button>
+        <button class="event__reset-btn" type="reset">${isEditForm() ? `Delete` : `Cancel`}</button>
 
         ${isEditForm() ? `
           <button class="event__rollup-btn" type="button">
@@ -167,6 +167,31 @@ export const createTripEditEventTemplate = (event = {}, cities = [], mode = `EDI
         ${createOffersFormTemplate(offers, id)}
         ${createdEventDestinationTemplate(eventDestination)}
       </section>
-    </form>
-  `;
+    </form>`
+  );
 };
+
+export default class EditEventView {
+  constructor(event = {}, cities = [], mode = `EDIT`) {
+    this._event = event;
+    this._cities = cities;
+    this._mode = mode;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEditEventTemplate(this._event, this._cities, this._mode);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = this.getTemplate();
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

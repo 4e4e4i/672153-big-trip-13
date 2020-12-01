@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {numberPad} from "../utils/number-pad";
+import {numberPad} from "../helpers/utils/number-pad";
 import {EventType} from "../helpers/constants";
 
 const createTripEventOffersTemplate = (offers) => {
@@ -7,7 +7,7 @@ const createTripEventOffersTemplate = (offers) => {
     return ``;
   }
 
-  return `
+  return (`
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
       ${offers.map(({price, name}) => `
@@ -18,7 +18,7 @@ const createTripEventOffersTemplate = (offers) => {
         </li>
       `).join(``)}
     </ul>
-  `;
+  `);
 };
 
 export const createTripEventTemplate = (event) => {
@@ -64,8 +64,8 @@ export const createTripEventTemplate = (event) => {
     ? `event__favorite-btn event__favorite-btn--active`
     : `event__favorite-btn`;
 
-  return `
-    <div class="event">
+  return (
+    `<div class="event">
       <time class="event__date" datetime="${startDateAttribute}">${startDayFormatted}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${eventType.toLowerCase()}.png" alt="Event type icon">
@@ -92,6 +92,29 @@ export const createTripEventTemplate = (event) => {
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
-    </div>
-  `;
+    </div>`
+  );
 };
+
+export default class EventView {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = this.getTemplate();
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
