@@ -11,7 +11,7 @@ import TripMessageView from "./view/trip-message-view";
 import {generateTripEvent} from "./mock/trip-event";
 import {CITIES, FilterType, RenderPosition} from "./helpers/constants";
 import {getSortedByElementKey} from "./helpers/utils/get-sorted-by-element-key";
-import {render, createHiddenTitle} from "./helpers/utils/dom-helpers";
+import {render, createHiddenTitle, replace} from "./helpers/utils/dom-helpers";
 
 const renderEvent = (eventList, event) => {
   const tripEventItemElement = new EventItemView().getElement();
@@ -19,11 +19,11 @@ const renderEvent = (eventList, event) => {
   const eventEditView = new EditEventView(event, CITIES);
 
   const switchEventToForm = () => {
-    eventView.getElement().replaceWith(eventEditView.getElement());
+    replace(eventEditView, eventView);
   };
 
   const switchFormToEvent = () => {
-    eventEditView.getElement().replaceWith(eventView.getElement());
+    replace(eventView, eventEditView);
   };
 
   const onEscKeyDown = (evt) => {
@@ -45,7 +45,7 @@ const renderEvent = (eventList, event) => {
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(tripEventItemElement, eventView.getElement(), RenderPosition.BEFOREEND);
+  render(tripEventItemElement, eventView, RenderPosition.BEFOREEND);
   render(eventList, tripEventItemElement, RenderPosition.BEFOREEND);
 };
 
@@ -126,11 +126,11 @@ const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
 if (Object.values(state.tripInfo).some(Boolean)) {
-  render(tripMainElement, new InfoView(state.tripInfo).getElement(), RenderPosition.AFTERBEGIN);
+  render(tripMainElement, new InfoView(state.tripInfo), RenderPosition.AFTERBEGIN);
 }
 
-const tripTabsElement = new TabsView(state.tabs).getElement();
-const tripFiltersElement = new FiltersView(FILTERS, state.activeFilter).getElement();
+const tripTabsElement = new TabsView(state.tabs);
+const tripFiltersElement = new FiltersView(FILTERS, state.activeFilter);
 render(tripControlsElement, tripTabsElement, RenderPosition.AFTERBEGIN);
 createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderPosition.BEFOREBEGIN);
 render(tripControlsElement, tripFiltersElement, RenderPosition.BEFOREEND);
@@ -139,15 +139,15 @@ createHiddenTitle({text: `Filter events`, level: 2}, tripFiltersElement, RenderP
 createHiddenTitle({text: `Trip events`, level: 2}, tripEventsElement, RenderPosition.AFTERBEGIN);
 if (state.eventPoints.length) {
   const eventListComponent = new EventListView();
-  render(tripEventsElement, new SortView(state.sortItems, state.activeSort).getElement(), RenderPosition.BEFOREEND);
-  render(tripEventsElement, eventListComponent.getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, new SortView(state.sortItems, state.activeSort), RenderPosition.BEFOREEND);
+  render(tripEventsElement, eventListComponent, RenderPosition.BEFOREEND);
 
   for (let i = 0; i < EVENT_COUNT; i++) {
     renderEvent(eventListComponent.getElement(), state.eventPoints[i]);
   }
 } else {
   const emptyMessage = `Click New Event to create your first point`;
-  render(tripEventsElement, new TripMessageView(emptyMessage).getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, new TripMessageView(emptyMessage), RenderPosition.BEFOREEND);
 }
 
 
