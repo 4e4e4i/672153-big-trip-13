@@ -1,4 +1,4 @@
-import {createElement} from "../helpers/utils/dom-helpers";
+import Abstract from "./abstract";
 
 export const createTripSortTemplate = (sortItems, activeSort = `day`) => {
   return (
@@ -20,26 +20,14 @@ export const createTripSortTemplate = (sortItems, activeSort = `day`) => {
   );
 };
 
-export default class SortView {
+export default class SortView extends Abstract {
   constructor(sortItems, activeSort) {
+    super();
     this._sortItems = sortItems;
     this._activeSort = activeSort;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripSortTemplate(this._sortItems, this._activeSort);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

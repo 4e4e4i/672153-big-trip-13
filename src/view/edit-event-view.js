@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import {EventType} from "../helpers/constants";
+import Abstract from "./abstract";
 const EVENTS = Object.values(EventType);
 
 const createEventsLabelsListTemplate = (type, id) => {
@@ -171,27 +172,38 @@ export const createTripEditEventTemplate = (event, cities, mode) => {
   );
 };
 
-export default class EditEventView {
+export default class EditEventView extends Abstract {
   constructor(event = {}, cities = [], mode = `EDIT`) {
+    super();
     this._event = event;
     this._cities = cities;
     this._mode = mode;
-    this._element = null;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._closeFormClickHandler = this._closeFormClickHandler.bind(this);
   }
 
   getTemplate() {
     return createTripEditEventTemplate(this._event, this._cities, this._mode);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = this.getTemplate();
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  _closeFormClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeFormClick();
+  }
+
+  setCloseFormClickHandler(callback) {
+    this._callback.closeFormClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._closeFormClickHandler);
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
 }

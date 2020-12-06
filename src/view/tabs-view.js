@@ -1,4 +1,4 @@
-import {createElement} from "../helpers/utils/dom-helpers";
+import Abstract from "./abstract";
 
 export const createTripTabsTemplate = (tabs) => {
   const componentModifiers = {
@@ -14,25 +14,13 @@ export const createTripTabsTemplate = (tabs) => {
   `);
 };
 
-export default class TabsView {
+export default class TabsView extends Abstract {
   constructor(tabs) {
+    super();
     this._tabs = tabs;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripTabsTemplate(this._tabs);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

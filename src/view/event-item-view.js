@@ -1,26 +1,9 @@
-import {createElement} from "../helpers/utils/dom-helpers";
+import Abstract from "./abstract";
 
-const createTripEventItemTemplate = (slot) => `<li class="trip-events__item">${slot}</li>`;
+const createTripEventItemTemplate = () => `<li class="trip-events__item"></li>`;
 
-export default class EventItemView {
-  constructor(slot) {
-    this._slot = slot;
-    this._element = null;
-  }
-
+export default class EventItemView extends Abstract {
   getTemplate() {
-    return createTripEventItemTemplate(this._slot);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createTripEventItemTemplate();
   }
 }

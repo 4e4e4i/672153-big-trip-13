@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {createElement} from "../helpers/utils/dom-helpers";
+import Abstract from "./abstract";
 
 const createInfoTitle = (cities) => {
   if (cities.length > 3) {
@@ -32,25 +32,13 @@ const createTripInfoTemplate = (info = {}) => {
   );
 };
 
-export default class InfoView {
+export default class InfoView extends Abstract {
   constructor(info) {
+    super();
     this._info = info;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripInfoTemplate(this._info);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
