@@ -14,9 +14,9 @@ import {getSortedByElementKey} from "./helpers/utils/get-sorted-by-element-key";
 import {render, createHiddenTitle} from "./helpers/utils/dom-helpers";
 
 const renderEvent = (eventList, event) => {
-  const tripEventItemElement = (slot) => new EventItemView(slot);
-  const eventView = tripEventItemElement(new EventView(event).getElement());
-  const eventEditView = tripEventItemElement(new EditEventView(event, CITIES).getElement());
+  const tripEventItemElement = new EventItemView().getElement();
+  const eventView = new EventView(event);
+  const eventEditView = new EditEventView(event, CITIES);
 
   const switchEventToForm = () => {
     eventView.getElement().replaceWith(eventEditView.getElement());
@@ -34,19 +34,19 @@ const renderEvent = (eventList, event) => {
     }
   };
 
-  eventView.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventView.setEditClickHandler(() => {
     switchEventToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditView.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, switchFormToEvent);
-  eventEditView.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventEditView.setCloseFormClickHandler(() => switchFormToEvent());
+  eventEditView.setFormSubmitHandler(() => {
     switchFormToEvent();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(eventList, eventView.getElement(), RenderPosition.BEFOREEND);
+  render(tripEventItemElement, eventView.getElement(), RenderPosition.BEFOREEND);
+  render(eventList, tripEventItemElement, RenderPosition.BEFOREEND);
 };
 
 const FILTERS = Object.values(FilterType);

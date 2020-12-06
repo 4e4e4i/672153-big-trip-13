@@ -1,4 +1,4 @@
-import {createElement} from "../helpers/utils/dom-helpers";
+import Abstract from "./abstract";
 
 const createTripFiltersTemplate = (filterList, activeFilter = ``) => {
   return (
@@ -22,26 +22,14 @@ const createTripFiltersTemplate = (filterList, activeFilter = ``) => {
   );
 };
 
-export default class FiltersView {
+export default class FiltersView extends Abstract {
   constructor(filterList, activeFilter) {
+    super();
     this._activeFilter = activeFilter;
     this._filterList = filterList;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripFiltersTemplate(this._filterList, this._activeFilter);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
