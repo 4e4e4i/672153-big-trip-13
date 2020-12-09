@@ -3,11 +3,11 @@ import Abstract from "../../../view/abstract";
 
 export const render = (container, child, place) => {
   if (container instanceof Abstract) {
-    container = container.getElement();
+    container = getComponentElement(container);
   }
 
   if (child instanceof Abstract) {
-    child = child.getElement();
+    child = getComponentElement(child);
   }
 
   switch (place) {
@@ -22,7 +22,7 @@ export const render = (container, child, place) => {
 
 export const renderTemplate = (container, template, place) => {
   if (container instanceof Abstract) {
-    container = container.getElement();
+    container = getComponentElement(container);
   }
 
   container.insertAdjacentHTML(place, template);
@@ -42,11 +42,11 @@ export const createHiddenTitle = ({text, level}, element, place) => {
 
 export const replace = (newChild, oldChild) => {
   if (oldChild instanceof Abstract) {
-    oldChild = oldChild.getElement();
+    oldChild = getComponentElement(oldChild);
   }
 
   if (newChild instanceof Abstract) {
-    newChild = newChild.getElement();
+    newChild = getComponentElement(newChild);
   }
 
   oldChild.replaceWith(newChild);
@@ -57,6 +57,8 @@ export const remove = (component) => {
     throw new Error(`Can remove only components`);
   }
 
-  component.getElement().remove();
+  getComponentElement(component).remove();
   component.removeElement();
 };
+
+export const getComponentElement = (component) => component.getElement();
