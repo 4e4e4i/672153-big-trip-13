@@ -100,7 +100,7 @@ const createCitiesInputTemplate = (selectedCity, cities, id) => {
   `;
 };
 
-export const createTripEditEventTemplate = (event, cities, mode) => {
+export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
   const {
     type = `TAXI`,
     destination: eventDestination = {
@@ -113,7 +113,7 @@ export const createTripEditEventTemplate = (event, cities, mode) => {
     price = 0,
     offers = [],
     id
-  } = event;
+  } = tripEvent;
 
   const isEditForm = () => mode === `EDIT`;
   const startTimeFormatted = dayjs(startTime).format(`DD/MM/YY HH:mm`);
@@ -173,9 +173,9 @@ export const createTripEditEventTemplate = (event, cities, mode) => {
 };
 
 export default class EditEventView extends Abstract {
-  constructor(event = {}, cities = [], mode = `EDIT`) {
+  constructor(tripEvent = {}, cities = [], mode = `EDIT`) {
     super();
-    this._event = event;
+    this._tripEvent = tripEvent;
     this._cities = cities;
     this._mode = mode;
 
@@ -184,12 +184,12 @@ export default class EditEventView extends Abstract {
   }
 
   getTemplate() {
-    return createTripEditEventTemplate(this._event, this._cities, this._mode);
+    return createTripEditEventTemplate(this._tripEvent, this._cities, this._mode);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._tripEvent);
   }
 
   _closeFormClickHandler(evt) {

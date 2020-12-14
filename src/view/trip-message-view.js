@@ -3,8 +3,12 @@ import Abstract from "./abstract";
 const createTripMessageTemplate = (message) => `<p class="trip-events__msg">${message}</p>`;
 
 export default class TripMessageView extends Abstract {
-  constructor(message) {
+  constructor() {
     super();
+    this._message = ``;
+  }
+
+  init(message) {
     this._message = message;
   }
 

@@ -1,4 +1,5 @@
 import {EventType, CITIES} from "../helpers/constants";
+import {nanoid} from "nanoid";
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -122,7 +123,7 @@ export const generateTripEvent = () => {
   const eventPrice = getRandomInteger(10, 200);
 
   return {
-    id: 1,
+    id: nanoid(),
     type: randomEventType,
     destination: {
       name: CITIES[getRandomInteger(0, CITIES.length - 1)],
