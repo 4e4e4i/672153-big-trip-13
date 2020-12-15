@@ -54,7 +54,6 @@ export const remove = (component) => {
 export const getPolymorphElement = (component, inheritedClass) => {
   if (isInstanceOfClass(component, inheritedClass)) {
     component = getComponentElement(component);
-    return component;
   }
   return component;
 };
