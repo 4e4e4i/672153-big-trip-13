@@ -38,7 +38,7 @@ export default class TripBoardPresenter {
 
   _renderTripList() {
     render(this._boardContainer, this._eventListComponent, RenderPosition.BEFOREEND);
-    [...this._tripEvents].forEach((tripEvent) => this._renderTripEvent(tripEvent));
+    this._tripEvents.forEach((tripEvent) => this._renderTripEvent(tripEvent));
   }
 
   _renderEmptyTripList() {

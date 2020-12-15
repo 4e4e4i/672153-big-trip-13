@@ -2,11 +2,11 @@ import {RenderPosition} from "../../constants";
 import Abstract from "../../../view/abstract";
 
 export const render = (container, child, place) => {
-  if (container instanceof Abstract) {
+  if (isInstanceOfClass(container, Abstract)) {
     container = getComponentElement(container);
   }
 
-  if (child instanceof Abstract) {
+  if (isInstanceOfClass(child, Abstract)) {
     child = getComponentElement(child);
   }
 
@@ -21,7 +21,7 @@ export const render = (container, child, place) => {
 };
 
 export const renderTemplate = (container, template, place) => {
-  if (container instanceof Abstract) {
+  if (isInstanceOfClass(container, Abstract)) {
     container = getComponentElement(container);
   }
 
@@ -41,11 +41,11 @@ export const createHiddenTitle = ({text, level}, element, place) => {
 };
 
 export const replace = (newChild, oldChild) => {
-  if (oldChild instanceof Abstract) {
+  if (isInstanceOfClass(oldChild, Abstract)) {
     oldChild = getComponentElement(oldChild);
   }
 
-  if (newChild instanceof Abstract) {
+  if (isInstanceOfClass(newChild, Abstract)) {
     newChild = getComponentElement(newChild);
   }
 
@@ -53,7 +53,7 @@ export const replace = (newChild, oldChild) => {
 };
 
 export const remove = (component) => {
-  if (!(component instanceof Abstract)) {
+  if (!(isInstanceOfClass(component, Abstract))) {
     throw new Error(`Can remove only components`);
   }
 
@@ -62,3 +62,5 @@ export const remove = (component) => {
 };
 
 export const getComponentElement = (component) => component.getElement();
+
+export const isInstanceOfClass = (object, parentClass) => object instanceof parentClass;
