@@ -103,6 +103,7 @@ export default class EventView extends Abstract {
     this._event = event;
 
     this._editClickHandler = this._editClickHandler.bind(this);
+    this._switchFavoriteClickHandler = this._switchFavoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -114,8 +115,18 @@ export default class EventView extends Abstract {
     this._callback.editClick();
   }
 
+  _switchFavoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.switchFavoriteClick();
+  }
+
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._editClickHandler);
+  }
+
+  setSwitchFavoriteClickHandler(callback) {
+    this._callback.switchFavoriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, this._switchFavoriteClickHandler);
   }
 }

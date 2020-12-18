@@ -2,13 +2,9 @@ import {RenderPosition} from "../../constants";
 import Abstract from "../../../view/abstract";
 
 export const render = (container, child, place) => {
-  if (container instanceof Abstract) {
-    container = container.getElement();
-  }
+  container = getPolymorphElement(container, Abstract);
 
-  if (child instanceof Abstract) {
-    child = child.getElement();
-  }
+  child = getPolymorphElement(child, Abstract);
 
   switch (place) {
     case RenderPosition.AFTERBEGIN:
@@ -21,9 +17,7 @@ export const render = (container, child, place) => {
 };
 
 export const renderTemplate = (container, template, place) => {
-  if (container instanceof Abstract) {
-    container = container.getElement();
-  }
+  container = getPolymorphElement(container, Abstract);
 
   container.insertAdjacentHTML(place, template);
 };
@@ -41,22 +35,29 @@ export const createHiddenTitle = ({text, level}, element, place) => {
 };
 
 export const replace = (newChild, oldChild) => {
-  if (oldChild instanceof Abstract) {
-    oldChild = oldChild.getElement();
-  }
+  oldChild = getPolymorphElement(oldChild, Abstract);
 
-  if (newChild instanceof Abstract) {
-    newChild = newChild.getElement();
-  }
+  newChild = getPolymorphElement(newChild, Abstract);
 
   oldChild.replaceWith(newChild);
 };
 
 export const remove = (component) => {
-  if (!(component instanceof Abstract)) {
+  if (!(isInstanceOfClass(component, Abstract))) {
     throw new Error(`Can remove only components`);
   }
 
-  component.getElement().remove();
+  getComponentElement(component).remove();
   component.removeElement();
 };
+
+export const getPolymorphElement = (component, inheritedClass) => {
+  if (isInstanceOfClass(component, inheritedClass)) {
+    component = getComponentElement(component);
+  }
+  return component;
+};
+
+export const getComponentElement = (component) => component.getElement();
+
+export const isInstanceOfClass = (object, parentClass) => object instanceof parentClass;
