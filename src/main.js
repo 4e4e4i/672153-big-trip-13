@@ -31,29 +31,6 @@ const state = {
   eventPoints: [],
 
   tripInfo: {},
-
-  sortItems: [
-    {
-      name: `day`,
-      isDisabled: false,
-    },
-    {
-      name: `event`,
-      isDisabled: true,
-    },
-    {
-      name: `time`,
-      isDisabled: false,
-    },
-    {
-      name: `price`,
-      isDisabled: false,
-    },
-    {
-      name: `offers`,
-      isDisabled: true
-    }
-  ]
 };
 
 const generatedEventPoints = Array.from({length: EVENT_COUNT}).map(generateTripEvent);
@@ -95,6 +72,6 @@ createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderP
 render(tripControlsElement, tripFiltersElement, RenderPosition.BEFOREEND);
 createHiddenTitle({text: `Filter events`, level: 2}, tripFiltersElement, RenderPosition.BEFOREBEGIN);
 
-tripBoardPresenter.init(state.eventPoints, state.sortItems);
+tripBoardPresenter.init(state.eventPoints);
 
 
