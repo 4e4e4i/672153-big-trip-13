@@ -1,6 +1,5 @@
 export const sortTripEventsByDay = (tripEventA, tripEventB) => {
-  const dueTime = ({startTime, endTime}) => endTime - startTime;
-  return dueTime(tripEventA) - dueTime(tripEventB);
+  return tripEventA.startTime - tripEventB.startTime;
 };
 
 export const sortTripEventsByPrice = ({totalPrice: totalPriceA}, {totalPrice: totalPriceB}) => {
