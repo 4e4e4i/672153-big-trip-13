@@ -77,7 +77,6 @@ export default class TripBoardPresenter {
         this._tripEvents.sort(sortByField(`startTime`));
         break;
       case SORT_TYPE.PRICE:
-        console.log(this._tripEvents)
         this._tripEvents.sort(sortByField(`totalPrice`));
         break;
       default:
