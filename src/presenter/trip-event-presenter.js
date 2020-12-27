@@ -19,7 +19,7 @@ export default class TripEventPresenter {
     this._eventComponent = null;
     this._editEventComponent = null;
     this._mode = Mode.DEFAULT;
-    this._eventItemComponent = new EventItemView().getElement();
+    this._eventItemComponent = new EventItemView();
 
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleSwitchFavoriteClick = this._handleSwitchFavoriteClick.bind(this);
@@ -42,10 +42,10 @@ export default class TripEventPresenter {
     this._editEventComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editEventComponent.setCloseFormClickHandler(this._handleCloseForm);
 
-    render(this._eventItemComponent, this._eventComponent, RenderPosition.BEFOREEND);
+    render(this._eventItemComponent.getElement(), this._eventComponent, RenderPosition.BEFOREEND);
 
     if (prevEventComponent === null || prevEditEventComponent === null) {
-      render(this._eventListContainer, this._eventItemComponent, RenderPosition.BEFOREEND);
+      render(this._eventListContainer, this._eventItemComponent.getElement(), RenderPosition.BEFOREEND);
       return;
     }
 
@@ -70,6 +70,7 @@ export default class TripEventPresenter {
   destroy() {
     remove(this._eventComponent);
     remove(this._editEventComponent);
+    remove(this._eventItemComponent);
   }
 
   _switchEventToForm() {

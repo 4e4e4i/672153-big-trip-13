@@ -1,19 +1,25 @@
 import Abstract from "./abstract";
+import {SortType} from "../helpers/constants";
+const DISABLED_SORT_TYPES = [SortType.EVENT, SortType.TIME, SortType.OFFERS];
 
-export const createTripSortTemplate = (sortItems, activeSort = `day`) => {
+export const createTripSortTemplate = (activeSort = `day`) => {
+  const sortTypeNames = Object.values(SortType);
+  const isDisabledSortType = (type) => DISABLED_SORT_TYPES.includes(type);
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-      ${sortItems.map(({name, isDisabled}) => `
-        <div class="trip-sort__item  trip-sort__item--${name}">
+      ${sortTypeNames.map((sortName) => `
+        <div class="trip-sort__item  trip-sort__item--${sortName}">
           <input
             id="sort-day"
             class="trip-sort__input visually-hidden"
-            ${name === activeSort ? `checked` : ``} ${isDisabled ? `disabled` : ``}
+            ${sortName === activeSort ? `checked` : ``}
+            ${isDisabledSortType(sortName) ? `disabled` : ``}
             type="radio"
             name="trip-sort"
-            value="sort-${name}"
+            data-sort-type="${sortName}"
+            value="sort-${sortName}"
           >
-          <label class="trip-sort__btn" for="sort-${name}">${name}</label>
+          <label class="trip-sort__btn" for="sort-${sortName}">${sortName}</label>
         </div>
       `).join(``)}
     </form>`
@@ -21,13 +27,36 @@ export const createTripSortTemplate = (sortItems, activeSort = `day`) => {
 };
 
 export default class SortView extends Abstract {
-  constructor(sortItems, activeSort) {
+  constructor(activeSort) {
     super();
-    this._sortItems = sortItems;
+
     this._activeSort = activeSort;
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createTripSortTemplate(this._sortItems, this._activeSort);
+    return createTripSortTemplate(this._activeSort);
+  }
+
+  _sortTypeChangeHandler(evt) {
+    evt.preventDefault();
+    const tripSortItem = evt.target.closest(`.trip-sort__item`);
+    if (!tripSortItem) {
+      return;
+    }
+    const tripSortInput = tripSortItem.querySelector(`input`);
+    if (!tripSortInput) {
+      return;
+    }
+    const {dataset: {sortType}, attributes: {disabled}} = tripSortInput;
+    if (disabled) {
+      return;
+    }
+    this._callback.sortTypeChange(sortType);
+  }
+
+  setSortTypeChangeHandler(callback) {
+    this._callback.sortTypeChange = callback;
+    this.getElement().addEventListener(`click`, this._sortTypeChangeHandler);
   }
 }

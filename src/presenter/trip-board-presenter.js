@@ -1,33 +1,37 @@
 import SortView from "../view/sort-view";
 import EventListView from "../view/event-list-view";
 import TripMessageView from "../view/trip-message-view";
-import {RenderPosition} from "../helpers/constants";
+import {RenderPosition, SortType} from "../helpers/constants";
 import {createHiddenTitle, render} from "../helpers/utils/dom-helpers";
 import {updateItem} from "../helpers/utils/update-item";
+import {sortByField} from "../helpers/utils/sort-by-field";
 import TripEventPresenter from "./trip-event-presenter";
 
 export default class TripBoardPresenter {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
-    this._sortItems = [];
     this._eventListComponent = new EventListView().getElement();
+    this._sortComponent = new SortView(this._activeSort);
     this._tripMessageView = new TripMessageView();
     this._tripEventPresenter = {};
 
     this._handleEventChange = this._handleEventChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this.activeSort = `day`;
+    this._activeSort = SortType.DAY;
   }
 
-  init(tripEvents, sortItems) {
+  init(tripEvents) {
     this._tripEvents = [...tripEvents];
-    this._sortItems = sortItems;
+    this._sourceTripEvents = [...tripEvents];
+    this._sortTripEvents(this._activeSort);
     this._renderTripBoard();
   }
 
   _renderSort() {
-    render(this._boardContainer, new SortView(this._sortItems, this.activeSort), RenderPosition.BEFOREEND);
+    render(this._boardContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderTripEvent(event) {
@@ -55,6 +59,31 @@ export default class TripBoardPresenter {
     Object
       .values(this._tripEventPresenter)
       .forEach((presenter) => presenter.resetView());
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._activeSort === sortType) {
+      return;
+    }
+
+    this._sortTripEvents(sortType);
+    this._clearTripEventList();
+    this._renderTripList();
+  }
+
+  _sortTripEvents(sortType) {
+    switch (sortType) {
+      case SortType.DAY:
+        this._tripEvents.sort(sortByField(`startTime`));
+        break;
+      case SortType.PRICE:
+        this._tripEvents.sort(sortByField(`totalPrice`));
+        break;
+      default:
+        this._tripEvents = [...this._sourceTripEvents];
+    }
+
+    this._activeSort = sortType;
   }
 
   _clearTripEventList() {
