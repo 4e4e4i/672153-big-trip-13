@@ -1,10 +1,10 @@
 import Abstract from "./abstract";
-import {SortType} from "../helpers/constants";
+import {SORT_TYPE} from "../helpers/constants";
 const disabledSortTypes = [`event`, `time`, `offers`];
 
 export const createTripSortTemplate = (activeSort = `day`) => {
-  const sortTypeNames = Object.values(SortType);
-  const isDisabledSortType = (type) => disabledSortTypes.some((item) => item === type);
+  const sortTypeNames = Object.values(SORT_TYPE);
+  const isDisabledSortType = (type) => disabledSortTypes.includes(type);
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       ${sortTypeNames.map((sortName) => `
@@ -44,7 +44,11 @@ export default class SortView extends Abstract {
     if (!tripSortItem) {
       return;
     }
-    const {dataset: {sortType}, attributes: {disabled}} = tripSortItem.querySelector(`input`);
+    const tripSortInput = tripSortItem.querySelector(`input`);
+    if (!tripSortInput) {
+      return;
+    }
+    const {dataset: {sortType}, attributes: {disabled}} = tripSortInput;
     if (disabled) {
       return;
     }

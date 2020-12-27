@@ -25,7 +25,7 @@ export const RenderPosition = {
   BEFOREEND: `beforeend`
 };
 
-export const SortType = {
+export const SORT_TYPE = {
   DAY: `day`,
   EVENT: `event`,
   TIME: `time`,
