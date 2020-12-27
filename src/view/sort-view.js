@@ -1,10 +1,10 @@
 import Abstract from "./abstract";
-import {SORT_TYPE} from "../helpers/constants";
-const disabledSortTypes = [`event`, `time`, `offers`];
+import {SortType} from "../helpers/constants";
+const DISABLED_SORT_TYPES = [SortType.EVENT, SortType.TIME, SortType.OFFERS];
 
 export const createTripSortTemplate = (activeSort = `day`) => {
-  const sortTypeNames = Object.values(SORT_TYPE);
-  const isDisabledSortType = (type) => disabledSortTypes.includes(type);
+  const sortTypeNames = Object.values(SortType);
+  const isDisabledSortType = (type) => DISABLED_SORT_TYPES.includes(type);
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       ${sortTypeNames.map((sortName) => `

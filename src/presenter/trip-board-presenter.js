@@ -1,7 +1,7 @@
 import SortView from "../view/sort-view";
 import EventListView from "../view/event-list-view";
 import TripMessageView from "../view/trip-message-view";
-import {RenderPosition, SORT_TYPE} from "../helpers/constants";
+import {RenderPosition, SortType} from "../helpers/constants";
 import {createHiddenTitle, render} from "../helpers/utils/dom-helpers";
 import {updateItem} from "../helpers/utils/update-item";
 import {sortByField} from "../helpers/utils/sort-by-field";
@@ -19,7 +19,7 @@ export default class TripBoardPresenter {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._activeSort = SORT_TYPE.DAY;
+    this._activeSort = SortType.DAY;
   }
 
   init(tripEvents) {
@@ -73,10 +73,10 @@ export default class TripBoardPresenter {
 
   _sortTripEvents(sortType) {
     switch (sortType) {
-      case SORT_TYPE.DAY:
+      case SortType.DAY:
         this._tripEvents.sort(sortByField(`startTime`));
         break;
-      case SORT_TYPE.PRICE:
+      case SortType.PRICE:
         this._tripEvents.sort(sortByField(`totalPrice`));
         break;
       default:
