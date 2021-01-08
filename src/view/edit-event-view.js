@@ -2,6 +2,10 @@ import dayjs from "dayjs";
 import {EventType, ADDITIONAL_OFFERS} from "../helpers/constants";
 import Smart from "./smart";
 import {getDestination} from "../mock/trip-event";
+import flatpickr from "flatpickr";
+
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+
 const EVENTS = Object.values(EventType);
 
 const createEventsLabelsListTemplate = (type, id) => {
@@ -179,13 +183,17 @@ export default class EditEventView extends Smart {
     this._data = tripEvent;
     this._cities = cities;
     this._mode = mode;
+    this._datepickers = {};
 
     this._eventTypeToggleHandler = this._eventTypeToggleHandler.bind(this);
     this._cityToggleHandler = this._cityToggleHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._closeFormClickHandler = this._closeFormClickHandler.bind(this);
+    this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
+    this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepickers();
   }
 
   getTemplate() {
@@ -194,6 +202,7 @@ export default class EditEventView extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepickers();
     this.setCloseFormClickHandler(this._callback.closeFormClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
   }
@@ -202,6 +211,47 @@ export default class EditEventView extends Smart {
     this.updateData(
         data
     );
+  }
+
+  _setDatepickers() {
+    this._setDatepickerStartTime(`start-time`);
+    this._setDatepickerEndTime(`end-time`);
+  }
+
+  _setDatepickerStartTime(periodTime) {
+    this._destroyDatepicker(periodTime);
+
+    this._datepickers[periodTime] = flatpickr(
+        this.getElement().querySelector(`.event__input--time[name='event-${periodTime}']`),
+        {
+          dateFormat: `d/m/y H:i`,
+          enableTime: true,
+          defaultDate: this._data[periodTime],
+          onChange: this._startTimeChangeHandler
+        }
+    );
+  }
+
+  _setDatepickerEndTime(periodTime) {
+    this._destroyDatepicker(periodTime);
+
+    this._datepickers[periodTime] = flatpickr(
+        this.getElement().querySelector(`.event__input--time[name='event-${periodTime}']`),
+        {
+          dateFormat: `d/m/y H:i`,
+          enableTime: true,
+          minDate: this._data[`startTime`],
+          defaultDate: this._data[periodTime],
+          onChange: this._endTimeChangeHandler
+        }
+    );
+  }
+
+  _destroyDatepicker(periodTime) {
+    if (this._datepickers && this._datepickers[periodTime]) {
+      this._datepickers[periodTime].destroy();
+      this._datepickers[periodTime] = null;
+    }
   }
 
   _setInnerHandlers() {
@@ -245,6 +295,18 @@ export default class EditEventView extends Smart {
       destination: getDestination(evt.target.value)
     });
 
+  }
+
+  _startTimeChangeHandler([userDate]) {
+    this.updateData({
+      startTime: dayjs(userDate)
+    });
+  }
+
+  _endTimeChangeHandler([userDate]) {
+    this.updateData({
+      endTime: dayjs(userDate)
+    });
   }
 
   setCloseFormClickHandler(callback) {
