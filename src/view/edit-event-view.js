@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
-import {EventType} from "../helpers/constants";
-import Abstract from "./abstract";
+import {EventType, ADDITIONAL_OFFERS} from "../helpers/constants";
+import Smart from "./smart";
+import {getDestination} from "../mock/trip-event";
 const EVENTS = Object.values(EventType);
 
 const createEventsLabelsListTemplate = (type, id) => {
@@ -172,29 +173,78 @@ export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
   );
 };
 
-export default class EditEventView extends Abstract {
+export default class EditEventView extends Smart {
   constructor(tripEvent = {}, cities = [], mode = `EDIT`) {
     super();
-    this._tripEvent = tripEvent;
+    this._data = tripEvent;
     this._cities = cities;
     this._mode = mode;
 
+    this._eventTypeToggleHandler = this._eventTypeToggleHandler.bind(this);
+    this._cityToggleHandler = this._cityToggleHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._closeFormClickHandler = this._closeFormClickHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    return createTripEditEventTemplate(this._tripEvent, this._cities, this._mode);
+    return createTripEditEventTemplate(this._data, this._cities, this._mode);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setCloseFormClickHandler(this._callback.closeFormClick);
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  reset(data) {
+    this.updateData(
+        data
+    );
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelectorAll(`.event__type-input`)
+      .forEach((radio) => {
+        radio.addEventListener(`change`, this._eventTypeToggleHandler);
+      });
+
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._cityToggleHandler);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._tripEvent);
+    this._callback.formSubmit(this._data);
   }
 
   _closeFormClickHandler(evt) {
     evt.preventDefault();
     this._callback.closeFormClick();
+  }
+
+  _eventTypeToggleHandler(evt) {
+    evt.preventDefault();
+    let type = evt.target.value.toUpperCase();
+    type = type.split(`-`).join(`_`);
+    if (!EventType[type]) {
+      return;
+    }
+    this.updateData({
+      type,
+      offers: ADDITIONAL_OFFERS[type] ? ADDITIONAL_OFFERS[type] : []
+    });
+  }
+
+  _cityToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      destination: getDestination(evt.target.value)
+    });
+
   }
 
   setCloseFormClickHandler(callback) {

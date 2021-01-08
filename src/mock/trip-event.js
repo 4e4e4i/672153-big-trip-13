@@ -1,4 +1,4 @@
-import {EventType, CITIES} from "../helpers/constants";
+import {EventType, CITIES, ADDITIONAL_OFFERS} from "../helpers/constants";
 import {nanoid} from "nanoid";
 
 const getRandomInteger = (a = 0, b = 1) => {
@@ -6,65 +6,6 @@ const getRandomInteger = (a = 0, b = 1) => {
   const upper = Math.floor(Math.max(a, b));
 
   return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
-const ADDITIONAL_OFFERS = {
-  FLIGHT: [
-    {
-      type: `luggage`,
-      name: `Add luggage`,
-      price: 50,
-    },
-    {
-      type: `comfort`,
-      name: `Switch to comfort`,
-      price: 80
-    },
-    {
-      type: `meal`,
-      name: `Add meal`,
-      price: 15
-    },
-    {
-      type: `seats`,
-      name: `Choose seats`,
-      price: 5
-    }
-  ],
-  SHIP: [
-    {
-      type: `luggage`,
-      name: `Add luggage`,
-      price: 50
-    },
-    {
-      type: `comfort`,
-      name: `Switch to comfort`,
-      price: 80
-    },
-    {
-      type: `meal`,
-      name: `Add meal`,
-      price: 15
-    },
-  ],
-  TRAIN: [
-    {
-      type: `comfort`,
-      name: `Switch to comfort`,
-      price: 80
-    },
-    {
-      type: `meal`,
-      name: `Add meal`,
-      price: 15
-    },
-    {
-      type: `seats`,
-      name: `Choose seats`,
-      price: 5
-    }
-  ]
 };
 
 const getRandomDescription = () => {
@@ -111,6 +52,14 @@ const getOffersPrice = (offers) => {
   }
 };
 
+export const getDestination = (city) => {
+  return {
+    name: city,
+    description: getRandomDescription(),
+    photos: getRandomPictures()
+  };
+};
+
 const getFullPrice = (price, offersPrice) => {
   return price + offersPrice;
 };
@@ -125,11 +74,7 @@ export const generateTripEvent = () => {
   return {
     id: nanoid(),
     type: randomEventType,
-    destination: {
-      name: CITIES[getRandomInteger(0, CITIES.length - 1)],
-      description: getRandomDescription(),
-      photos: getRandomPictures(),
-    },
+    destination: getDestination(CITIES[getRandomInteger(0, CITIES.length - 1)]),
     startTime,
     endTime,
     offers,

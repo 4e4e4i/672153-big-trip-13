@@ -5,7 +5,7 @@ export const EventType = {
   SHIP: `Ship`,
   TRANSPORT: `Transport`,
   DRIVE: `Drive`,
-  FLIGHT: `FLight`,
+  FLIGHT: `Flight`,
   CHECK_IN: `Check-in`,
   SIGHTSEEING: `Sightseeing`,
   RESTAURANT: `Restaurant`
@@ -18,6 +18,72 @@ export const FilterType = {
 };
 
 export const CITIES = [`Tokio`, `Kioto`, `Osaka`, `Nagoya`, `Saporo`];
+
+export const ADDITIONAL_OFFERS = {
+  FLIGHT: [
+    {
+      type: `luggage`,
+      name: `Add luggage`,
+      price: 50,
+      isChecked: false
+    },
+    {
+      type: `comfort`,
+      name: `Switch to comfort`,
+      price: 80,
+      isChecked: false
+    },
+    {
+      type: `meal`,
+      name: `Add meal`,
+      price: 15,
+      isChecked: false
+    },
+    {
+      type: `seats`,
+      name: `Choose seats`,
+      price: 5,
+      isChecked: false
+    }
+  ],
+  SHIP: [
+    {
+      type: `luggage`,
+      name: `Add luggage`,
+      price: 50,
+      isChecked: false
+    },
+    {
+      type: `comfort`,
+      name: `Switch to comfort`,
+      price: 80,
+      isChecked: false
+    },
+    {
+      type: `meal`,
+      name: `Add meal`,
+      price: 15,
+      isChecked: false
+    },
+  ],
+  TRAIN: [
+    {
+      type: `comfort`,
+      name: `Switch to comfort`,
+      price: 80
+    },
+    {
+      type: `meal`,
+      name: `Add meal`,
+      price: 15
+    },
+    {
+      type: `seats`,
+      name: `Choose seats`,
+      price: 5
+    }
+  ]
+};
 
 export const RenderPosition = {
   BEFOREBEGIN: `beforebegin`,

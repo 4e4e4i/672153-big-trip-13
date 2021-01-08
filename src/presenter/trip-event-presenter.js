@@ -89,12 +89,14 @@ export default class TripEventPresenter {
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
+      this._resetEditComponentData();
       this._switchFormToEvent();
     }
   }
 
   _handleEditClick() {
     this._switchEventToForm();
+    this._resetEditComponentData();
   }
 
   _handleSwitchFavoriteClick() {
@@ -115,6 +117,11 @@ export default class TripEventPresenter {
   }
 
   _handleCloseForm() {
+    this._resetEditComponentData();
     this._switchFormToEvent();
+  }
+
+  _resetEditComponentData() {
+    this._editEventComponent.reset(this._tripEvent);
   }
 }
