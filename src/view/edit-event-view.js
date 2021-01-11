@@ -278,8 +278,7 @@ export default class EditEventView extends Smart {
 
   _eventTypeToggleHandler(evt) {
     evt.preventDefault();
-    let type = evt.target.value.toUpperCase();
-    type = type.split(`-`).join(`_`);
+    const type = evt.target.value.toUpperCase().split(`-`).join(`_`);
     if (!EventType[type]) {
       return;
     }
