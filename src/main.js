@@ -2,6 +2,7 @@ import InfoView from "./view/info-view";
 import TabsView from "./view/tabs-view";
 import FiltersView from "./view/filters-view";
 import TripBoardPresenter from "./presenter/trip-board-presenter";
+import PointsModel from "./model/points-model";
 
 import {generateTripEvent} from "./mock/trip-event";
 import {FilterType, RenderPosition} from "./helpers/constants";
@@ -34,7 +35,9 @@ const state = {
 };
 
 const generatedEventPoints = Array.from({length: EVENT_COUNT}).map(generateTripEvent);
-state.eventPoints = generatedEventPoints;
+
+const pointsModel = new PointsModel();
+pointsModel.setPoints(generatedEventPoints);
 
 const getTotalPrice = (events) => events.reduce((acc, {totalPrice}) => acc + totalPrice, 0);
 const getVisitedCities = (events) => events.map(({destination: {name}}) => name);
@@ -49,8 +52,8 @@ const calculateTripInfo = (eventPoints) => {
   };
 };
 
-if (state.eventPoints.length) {
-  state.tripInfo = calculateTripInfo(state.eventPoints);
+if (generatedEventPoints.length) {
+  state.tripInfo = calculateTripInfo(generatedEventPoints);
 }
 
 const siteMainElement = document.querySelector(`.page-main`);
@@ -59,7 +62,7 @@ const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
-const tripBoardPresenter = new TripBoardPresenter(tripEventsElement);
+const tripBoardPresenter = new TripBoardPresenter(tripEventsElement, pointsModel);
 
 if (Object.values(state.tripInfo).some(Boolean)) {
   render(tripMainElement, new InfoView(state.tripInfo), RenderPosition.AFTERBEGIN);
@@ -72,6 +75,6 @@ createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderP
 render(tripControlsElement, tripFiltersElement, RenderPosition.BEFOREEND);
 createHiddenTitle({text: `Filter events`, level: 2}, tripFiltersElement, RenderPosition.BEFOREBEGIN);
 
-tripBoardPresenter.init(state.eventPoints);
+tripBoardPresenter.init();
 
 

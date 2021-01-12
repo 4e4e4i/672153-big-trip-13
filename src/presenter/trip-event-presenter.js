@@ -2,8 +2,9 @@ import EventItemView from "../view/event-item-view";
 import EventView from "../view/event-view";
 import EditEventView from "../view/edit-event-view";
 
-import {CITIES, RenderPosition} from "../helpers/constants";
+import {CITIES, RenderPosition, UserAction, UpdateType} from "../helpers/constants";
 import {render, replace, remove} from "../helpers/utils/dom-helpers";
+import {isDatesEqual} from "../helpers/utils/is-dates-equal";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -26,6 +27,7 @@ export default class TripEventPresenter {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleCloseForm = this._handleCloseForm.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(tripEvent) {
@@ -41,6 +43,7 @@ export default class TripEventPresenter {
     this._eventComponent.setSwitchFavoriteClickHandler(this._handleSwitchFavoriteClick);
     this._editEventComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editEventComponent.setCloseFormClickHandler(this._handleCloseForm);
+    this._editEventComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     render(this._eventItemComponent.getElement(), this._eventComponent, RenderPosition.BEFOREEND);
 
@@ -101,6 +104,8 @@ export default class TripEventPresenter {
 
   _handleSwitchFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._tripEvent,
@@ -111,14 +116,28 @@ export default class TripEventPresenter {
     );
   }
 
-  _handleFormSubmit(tripEvent) {
-    this._changeData(tripEvent);
+  _handleFormSubmit(update) {
+    const isMinorUpdate = !isDatesEqual(this._tripEvent.startTime, update.startTime);
+
+    this._changeData(
+        UserAction.UPDATE_POINT,
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        update
+    );
     this._switchFormToEvent();
   }
 
   _handleCloseForm() {
     this._resetEditComponentData();
     this._switchFormToEvent();
+  }
+
+  _handleDeleteClick(point) {
+    this._changeData(
+        UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        point
+    );
   }
 
   _resetEditComponentData() {
