@@ -8,9 +8,26 @@ import "flatpickr/dist/flatpickr.min.css";
 
 const EVENTS = Object.values(EventType);
 
+const MIN_PRICE = 0;
+
 const CALENDAR_DEFAULT_CONFIG = {
   dateFormat: `d/m/y H:i`,
   enableTime: true,
+};
+
+const BLANK_POINT = {
+  type: `TAXI`,
+  destination: {
+    name: ``,
+    description: ``,
+    photos: []
+  },
+  startTime: new Date().getTime(),
+  endTime: new Date().getTime(),
+  offers: ADDITIONAL_OFFERS[EventType.TAXI] || [],
+  isFavorite: false,
+  price: 0,
+  totalPrice: 0
 };
 
 const createEventsLabelsListTemplate = (type, id) => {
@@ -85,7 +102,7 @@ const createPhotosTapeTemplate = (photos = []) => {
     `;
 };
 
-const createdEventDestinationTemplate = (destination) => {
+const createdEventDestinationTemplate = (destination = {}) => {
   const {name, photos = [], description} = destination;
   if (!name) {
     return ``;
@@ -113,7 +130,7 @@ const createCitiesInputTemplate = (selectedCity, cities, id) => {
 export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
   const {
     type = `TAXI`,
-    destination: eventDestination = {
+    destination = {
       name: ``,
       description: ``,
       photos: []
@@ -146,7 +163,7 @@ export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
           <label class="event__label  event__type-output" for="event-destination-${id}">
             ${EventType[type]}
           </label>
-          ${createCitiesInputTemplate(eventDestination.name, cities, id)}
+          ${createCitiesInputTemplate(destination.name, cities, id)}
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -176,21 +193,23 @@ export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
       </header>
       <section class="event__details">
         ${createOffersFormTemplate(offers, id)}
-        ${createdEventDestinationTemplate(eventDestination)}
+        ${createdEventDestinationTemplate(destination)}
       </section>
     </form>`
   );
 };
 
 export default class EditEventView extends Smart {
-  constructor(tripEvent = {}, cities = [], mode = `EDIT`) {
+  constructor(tripEvent = BLANK_POINT, cities = [], mode = `EDIT`) {
     super();
     this._data = tripEvent;
     this._cities = cities;
     this._mode = mode;
     this._datepickers = {};
+    this._priceInputEl = null;
 
     this._eventTypeToggleHandler = this._eventTypeToggleHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._cityToggleHandler = this._cityToggleHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -284,6 +303,9 @@ export default class EditEventView extends Smart {
     this.getElement()
       .querySelector(`.event__input--destination`)
       .addEventListener(`change`, this._cityToggleHandler);
+
+    this._priceInputEl = this.getElement().querySelector(`.event__input--price`);
+    this._priceInputEl.addEventListener(`change`, this._priceChangeHandler);
   }
 
   _formSubmitHandler(evt) {
@@ -304,7 +326,15 @@ export default class EditEventView extends Smart {
     }
     this.updateData({
       type,
-      offers: ADDITIONAL_OFFERS[type] ? ADDITIONAL_OFFERS[type] : []
+      offers: ADDITIONAL_OFFERS[type] || []
+    });
+  }
+
+  _priceChangeHandler(evt) {
+    this._priceInputEl.value = evt.target.value.replace(/[^\d]/g, ``);
+
+    this.updateData({
+      price: evt.target.value || 0
     });
   }
 
@@ -313,7 +343,6 @@ export default class EditEventView extends Smart {
     this.updateData({
       destination: getDestination(evt.target.value)
     });
-
   }
 
   _startTimeChangeHandler([userDate]) {

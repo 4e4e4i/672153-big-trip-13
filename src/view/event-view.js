@@ -23,7 +23,7 @@ const createTripEventOffersTemplate = (offers) => {
 };
 
 export const createTripEventTemplate = (event) => {
-  const {type, destination, startTime, endTime, price, isFavorite, offers} = event;
+  const {type, destination, startTime, endTime, price, isFavorite, offers = []} = event;
 
   const eventType = EventType[type];
   const checkedOffers = offers.filter((offer) => offer.isChecked);

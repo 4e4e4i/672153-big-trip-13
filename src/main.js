@@ -75,4 +75,9 @@ createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderP
 tripFilterPresenter.init();
 tripBoardPresenter.init();
 
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripBoardPresenter.createTask();
+});
+
 

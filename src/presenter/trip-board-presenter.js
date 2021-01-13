@@ -1,10 +1,11 @@
 import SortView from "../view/sort-view";
 import EventListView from "../view/event-list-view";
 import TripMessageView from "../view/trip-message-view";
-import {RenderPosition, SortType, UpdateType, UserAction} from "../helpers/constants";
+import {FilterType, RenderPosition, SortType, UpdateType, UserAction} from "../helpers/constants";
 import {createHiddenTitle, remove, render} from "../helpers/utils/dom-helpers";
 import {sortByField} from "../helpers/utils/sort-by-field";
 import TripEventPresenter from "./trip-event-presenter";
+import TripNewEventPresenter from "./trip-new-event-presenter";
 import {filter} from "../helpers/utils/filter";
 
 export default class TripBoardPresenter {
@@ -25,11 +26,19 @@ export default class TripBoardPresenter {
 
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+
+    this._tripNewEventPresenter = new TripNewEventPresenter(this._eventListComponent, this._handleViewAction)
   }
 
   init() {
     createHiddenTitle({text: `Trip events`, level: 2}, this._boardContainer, RenderPosition.AFTERBEGIN);
     this._renderTripBoard();
+  }
+
+  createTask() {
+    this._activeSort = SortType.DAY;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._tripNewEventPresenter.init();
   }
 
   _getPoints() {
@@ -80,6 +89,7 @@ export default class TripBoardPresenter {
   }
 
   _handleModeChange() {
+    this._tripNewEventPresenter.destroy();
     Object
       .values(this._tripEventPresenter)
       .forEach((presenter) => presenter.resetView());
@@ -126,6 +136,7 @@ export default class TripBoardPresenter {
   }
 
   _clearBoard({resetSortType = false} = {}) {
+    this._tripNewEventPresenter.destroy();
     Object
       .values(this._tripEventPresenter)
       .forEach((presenter) => presenter.destroy());
