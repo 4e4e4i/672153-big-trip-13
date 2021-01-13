@@ -5,14 +5,16 @@ import {RenderPosition, SortType, UpdateType, UserAction} from "../helpers/const
 import {createHiddenTitle, remove, render} from "../helpers/utils/dom-helpers";
 import {sortByField} from "../helpers/utils/sort-by-field";
 import TripEventPresenter from "./trip-event-presenter";
+import {filter} from "../helpers/utils/filter";
 
 export default class TripBoardPresenter {
-  constructor(boardContainer, pointsModel) {
+  constructor(boardContainer, pointsModel, filterModel) {
     this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
     this._boardContainer = boardContainer;
     this._eventListComponent = new EventListView().getElement();
     this._sortComponent = null;
-    this._tripMessageView = new TripMessageView();
+    this._tripMessageView = null;
     this._tripEventPresenter = {};
     this._activeSort = SortType.DAY;
 
@@ -22,28 +24,32 @@ export default class TripBoardPresenter {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
+    createHiddenTitle({text: `Trip events`, level: 2}, this._boardContainer, RenderPosition.AFTERBEGIN);
     this._renderTripBoard();
   }
 
   _getPoints() {
-    switch (this._activeSort) {
-      case SortType.DAY:
-        return this._pointsModel.getPoints().slice().sort(sortByField(`startTime`));
-      case SortType.PRICE:
-        return this._pointsModel.getPoints().slice().sort(sortByField(`totalPrice`));
+    const filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filteredPoints = filter[filterType](points);
+
+    if (filteredPoints.length) {
+      switch (this._activeSort) {
+        case SortType.DAY:
+          return filteredPoints.sort(sortByField(`startTime`));
+        case SortType.PRICE:
+          return filteredPoints.sort(sortByField(`totalPrice`));
+      }
     }
 
-    return this._pointsModel.getPoints();
+    return filteredPoints;
   }
 
   _handleViewAction(actionType, updateType, update) {
-    // Здесь будем вызывать обновление модели
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this._pointsModel.updatePoint(updateType, update);
@@ -63,12 +69,10 @@ export default class TripBoardPresenter {
         this._tripEventPresenter[data.id].init(data);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
         this._clearBoard();
         this._renderTripBoard();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
         this._clearBoard({resetSortType: true});
         this._renderTripBoard();
         break;
@@ -114,7 +118,11 @@ export default class TripBoardPresenter {
 
   _renderEmptyTripList() {
     const emptyMessage = `Click New Event to create your first point`;
-    render(this._boardContainer, this._tripMessageView.init(emptyMessage), RenderPosition.BEFOREEND);
+    if (this._tripMessageView === null) {
+      this._tripMessageView = new TripMessageView();
+      this._tripMessageView.init(emptyMessage);
+    }
+    render(this._boardContainer, this._tripMessageView.getElement(), RenderPosition.BEFOREEND);
   }
 
   _clearBoard({resetSortType = false} = {}) {
@@ -132,7 +140,6 @@ export default class TripBoardPresenter {
   }
 
   _renderTripBoard() {
-    createHiddenTitle({text: `Trip events`, level: 2}, this._boardContainer, RenderPosition.AFTERBEGIN);
     const points = this._getPoints().slice();
     if (points.length) {
       this._renderSort();

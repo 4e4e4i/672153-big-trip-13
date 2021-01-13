@@ -4,9 +4,14 @@ import Smart from "./smart";
 import {getDestination} from "../mock/trip-event";
 import flatpickr from "flatpickr";
 
-import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+import "flatpickr/dist/flatpickr.min.css";
 
 const EVENTS = Object.values(EventType);
+
+const CALENDAR_DEFAULT_CONFIG = {
+  dateFormat: `d/m/y H:i`,
+  enableTime: true,
+};
 
 const createEventsLabelsListTemplate = (type, id) => {
   if (!EVENTS.length) {
@@ -234,12 +239,14 @@ export default class EditEventView extends Smart {
 
     this._datepickers[periodTime] = flatpickr(
         this.getElement().querySelector(`.event__input--time[name='event-${periodTime}']`),
-        {
-          dateFormat: `d/m/y H:i`,
-          enableTime: true,
-          defaultDate: this._data[periodTime],
-          onChange: this._startTimeChangeHandler
-        }
+        Object.assign(
+            {},
+            CALENDAR_DEFAULT_CONFIG,
+            {
+              defaultDate: this._data[periodTime],
+              onChange: this._startTimeChangeHandler
+            }
+        )
     );
   }
 
@@ -248,13 +255,15 @@ export default class EditEventView extends Smart {
 
     this._datepickers[periodTime] = flatpickr(
         this.getElement().querySelector(`.event__input--time[name='event-${periodTime}']`),
-        {
-          dateFormat: `d/m/y H:i`,
-          enableTime: true,
-          minDate: this._data[`startTime`],
-          defaultDate: this._data[periodTime],
-          onChange: this._endTimeChangeHandler
-        }
+        Object.assign(
+            {},
+            CALENDAR_DEFAULT_CONFIG,
+            {
+              minDate: this._data[`startTime`],
+              defaultDate: this._data[periodTime],
+              onChange: this._endTimeChangeHandler
+            }
+        )
     );
   }
 
