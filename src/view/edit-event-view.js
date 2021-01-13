@@ -8,8 +8,6 @@ import "flatpickr/dist/flatpickr.min.css";
 
 const EVENTS = Object.values(EventType);
 
-const MIN_PRICE = 0;
-
 const CALENDAR_DEFAULT_CONFIG = {
   dateFormat: `d/m/y H:i`,
   enableTime: true,

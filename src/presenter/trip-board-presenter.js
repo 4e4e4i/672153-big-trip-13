@@ -27,7 +27,7 @@ export default class TripBoardPresenter {
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
-    this._tripNewEventPresenter = new TripNewEventPresenter(this._eventListComponent, this._handleViewAction)
+    this._tripNewEventPresenter = new TripNewEventPresenter(this._eventListComponent, this._handleViewAction);
   }
 
   init() {
