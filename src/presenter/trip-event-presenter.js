@@ -4,7 +4,7 @@ import EditEventView from "../view/edit-event-view";
 
 import {CITIES, RenderPosition, UserAction, UpdateType} from "../helpers/constants";
 import {render, replace, remove} from "../helpers/utils/dom-helpers";
-import {isDatesEqual} from "../helpers/utils/is-dates-equal";
+import {isDateEqual} from "../helpers/utils/is-dates-equal";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -117,7 +117,7 @@ export default class TripEventPresenter {
   }
 
   _handleFormSubmit(update) {
-    const isMinorUpdate = !isDatesEqual(this._tripEvent.startTime, update.startTime);
+    const isMinorUpdate = !isDateEqual(this._tripEvent.startTime, update.startTime);
 
     this._changeData(
         UserAction.UPDATE_POINT,
