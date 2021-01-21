@@ -6,7 +6,7 @@ import {createHiddenTitle, remove, render} from "../helpers/utils/dom-helpers";
 import {sortByField} from "../helpers/utils/sort-by-field";
 import TripEventPresenter from "./trip-event-presenter";
 import TripNewEventPresenter from "./trip-new-event-presenter";
-import {filter} from "../helpers/utils/filter";
+import {FILTER} from "../helpers/utils/filter";
 
 export default class TripBoardPresenter {
   constructor(boardContainer, pointsModel, filterModel) {
@@ -44,7 +44,7 @@ export default class TripBoardPresenter {
   _getPoints() {
     const filterType = this._filterModel.getFilter();
     const points = this._pointsModel.getPoints();
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = FILTER[filterType](points);
 
     if (filteredPoints.length) {
       switch (this._activeSort) {
