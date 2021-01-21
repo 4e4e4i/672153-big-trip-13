@@ -1,14 +1,14 @@
 import InfoView from "./view/info-view";
 import TabsView from "./view/tabs-view";
-import FiltersView from "./view/filters-view";
 import TripBoardPresenter from "./presenter/trip-board-presenter";
+import TripFilterPresenter from "./presenter/trip-filter-presenter";
+import PointsModel from "./model/points-model";
+import FilterModel from "./model/filter-model";
 
 import {generateTripEvent} from "./mock/trip-event";
-import {FilterType, RenderPosition} from "./helpers/constants";
+import {RenderPosition} from "./helpers/constants";
 import {getSortedByElementKey} from "./helpers/utils/get-sorted-by-element-key";
 import {render, createHiddenTitle} from "./helpers/utils/dom-helpers";
-
-const FILTERS = Object.values(FilterType);
 
 const EVENT_COUNT = 15;
 
@@ -26,15 +26,17 @@ const state = {
     }
   ],
 
-  activeFilter: `everything`,
-
   eventPoints: [],
 
   tripInfo: {},
 };
 
 const generatedEventPoints = Array.from({length: EVENT_COUNT}).map(generateTripEvent);
-state.eventPoints = generatedEventPoints;
+
+const pointsModel = new PointsModel();
+pointsModel.setPoints(generatedEventPoints);
+
+const filterModel = new FilterModel();
 
 const getTotalPrice = (events) => events.reduce((acc, {totalPrice}) => acc + totalPrice, 0);
 const getVisitedCities = (events) => events.map(({destination: {name}}) => name);
@@ -49,8 +51,8 @@ const calculateTripInfo = (eventPoints) => {
   };
 };
 
-if (state.eventPoints.length) {
-  state.tripInfo = calculateTripInfo(state.eventPoints);
+if (generatedEventPoints.length) {
+  state.tripInfo = calculateTripInfo(generatedEventPoints);
 }
 
 const siteMainElement = document.querySelector(`.page-main`);
@@ -59,19 +61,23 @@ const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
-const tripBoardPresenter = new TripBoardPresenter(tripEventsElement);
+const tripBoardPresenter = new TripBoardPresenter(tripEventsElement, pointsModel, filterModel);
+const tripFilterPresenter = new TripFilterPresenter(tripControlsElement, filterModel, pointsModel);
 
 if (Object.values(state.tripInfo).some(Boolean)) {
   render(tripMainElement, new InfoView(state.tripInfo), RenderPosition.AFTERBEGIN);
 }
 
 const tripTabsElement = new TabsView(state.tabs);
-const tripFiltersElement = new FiltersView(FILTERS, state.activeFilter);
 render(tripControlsElement, tripTabsElement, RenderPosition.AFTERBEGIN);
 createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderPosition.BEFOREBEGIN);
-render(tripControlsElement, tripFiltersElement, RenderPosition.BEFOREEND);
-createHiddenTitle({text: `Filter events`, level: 2}, tripFiltersElement, RenderPosition.BEFOREBEGIN);
 
-tripBoardPresenter.init(state.eventPoints);
+tripFilterPresenter.init();
+tripBoardPresenter.init();
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripBoardPresenter.createTask();
+});
 
 

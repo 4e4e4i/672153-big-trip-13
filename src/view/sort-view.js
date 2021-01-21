@@ -10,7 +10,7 @@ export const createTripSortTemplate = (activeSort = `day`) => {
       ${sortTypeNames.map((sortName) => `
         <div class="trip-sort__item  trip-sort__item--${sortName}">
           <input
-            id="sort-day"
+            id="sort-day-${sortName}"
             class="trip-sort__input visually-hidden"
             ${sortName === activeSort ? `checked` : ``}
             ${isDisabledSortType(sortName) ? `disabled` : ``}
