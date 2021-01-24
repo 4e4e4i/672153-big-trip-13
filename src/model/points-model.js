@@ -1,17 +1,42 @@
 import Observer from "../helpers/utils/observer";
 
+import {addOfferId} from "../api";
+
+const getTotalPrice = (price, offers) => {
+  const offersPrice = offers.reduce((acc, item) => acc + item.price, 0);
+  return price + offersPrice;
+};
+
 export default class PointsModel extends Observer {
   constructor() {
     super();
     this._points = [];
   }
 
-  setPoints(points) {
-    this._points = points.slice();
-  }
-
   getPoints() {
     return this._points;
+  }
+
+  getDestinations() {
+    return this._destinations;
+  }
+
+  getOffers() {
+    return this._offers;
+  }
+
+  setPoints(updateType, points) {
+    this._points = points.slice();
+
+    this._notify(updateType);
+  }
+
+  setDestinations(destinations) {
+    this._destinations = destinations;
+  }
+
+  setOffers(offers) {
+    this._offers = offers;
   }
 
   updatePoint(updateType, update) {
@@ -52,5 +77,51 @@ export default class PointsModel extends Observer {
     ];
 
     this._notify(updateType);
+  }
+
+  static adaptToClient(point) {
+    const adaptedPoint = Object.assign(
+        {},
+        point,
+        {
+          type: point.type.toUpperCase().replace(`-`, `_`),
+          price: point.base_price,
+          startTime: new Date(point.date_from),
+          endTime: new Date(point.date_to),
+          isFavorite: point.is_favorite,
+          totalPrice: getTotalPrice(point.base_price, point.offers),
+          offers: point.offers.map(addOfferId)
+        }
+    );
+
+    delete adaptedPoint.base_price;
+    delete adaptedPoint.date_from;
+    delete adaptedPoint.date_to;
+    delete adaptedPoint.is_favorite;
+
+    return adaptedPoint;
+  }
+
+  static adaptToServer(point) {
+    const adaptedPoint = Object.assign(
+        {},
+        point,
+        {
+          "type": point.type.toLowerCase().replace(`_`, `-`),
+          "base_price": point.price,
+          "date_from": point.startTime,
+          "date_to": point.endTime,
+          "is_favorite": point.isFavorite,
+          "offers": point.offers.map((offer) => ({title: offer.title, price: offer.price}))
+        }
+    );
+
+    delete adaptedPoint.price;
+    delete adaptedPoint.startTime;
+    delete adaptedPoint.endTime;
+    delete adaptedPoint.isFavorite;
+    delete adaptedPoint.totalPrice;
+
+    return adaptedPoint;
   }
 }

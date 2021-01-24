@@ -11,9 +11,9 @@ const createTripEventOffersTemplate = (offers) => {
   return (`
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${offers.map(({price, name}) => `
+      ${offers.map(({price, title}) => `
         <li class="event__offer">
-          <span class="event__offer-title">${name}</span>
+          <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${price}</span>
         </li>
@@ -26,7 +26,7 @@ export const createTripEventTemplate = (event) => {
   const {type, destination, startTime, endTime, price, isFavorite, offers = []} = event;
 
   const eventType = EventType[type];
-  const checkedOffers = offers.filter((offer) => offer.isChecked);
+  const checkedOffers = offers;
   const startDate = dayjs(startTime);
   const endDate = dayjs(endTime);
   const startTimeFormatted = startDate.format(`HH:mm`);

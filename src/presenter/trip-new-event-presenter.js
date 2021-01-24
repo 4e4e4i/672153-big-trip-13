@@ -15,12 +15,12 @@ export default class TripNewEventPresenter {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(destinations, availableOffers) {
     if (this._editEventComponent !== null) {
       return;
     }
 
-    this._editEventComponent = new EditEventView();
+    this._editEventComponent = new EditEventView(undefined, destinations, availableOffers, `CREATE`);
     this._editEventComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editEventComponent.setDeleteClickHandler(this._handleDeleteClick);
 

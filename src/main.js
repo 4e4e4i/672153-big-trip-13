@@ -5,12 +5,13 @@ import TripFilterPresenter from "./presenter/trip-filter-presenter";
 import PointsModel from "./model/points-model";
 import FilterModel from "./model/filter-model";
 
-import {generateTripEvent} from "./mock/trip-event";
-import {RenderPosition} from "./helpers/constants";
+import {RenderPosition, UpdateType} from "./helpers/constants";
 import {getSortedByElementKey} from "./helpers/utils/get-sorted-by-element-key";
 import {render, createHiddenTitle} from "./helpers/utils/dom-helpers";
+import Api from "./api";
 
-const EVENT_COUNT = 15;
+const AUTHORIZATION = `Basic asldfkjlk3213dsaiii33ud`;
+const END_POINT = `https://13.ecmascript.pages.academy/big-trip`;
 
 const state = {
   tabs: [
@@ -24,17 +25,12 @@ const state = {
       url: `#`,
       isActive: false
     }
-  ],
-
-  eventPoints: [],
-
-  tripInfo: {},
+  ]
 };
 
-const generatedEventPoints = Array.from({length: EVENT_COUNT}).map(generateTripEvent);
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const pointsModel = new PointsModel();
-pointsModel.setPoints(generatedEventPoints);
 
 const filterModel = new FilterModel();
 
@@ -51,26 +47,24 @@ const calculateTripInfo = (eventPoints) => {
   };
 };
 
-if (generatedEventPoints.length) {
-  state.tripInfo = calculateTripInfo(generatedEventPoints);
-}
-
 const siteMainElement = document.querySelector(`.page-main`);
 const siteHeaderElement = document.querySelector(`.page-header`);
 const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
-const tripBoardPresenter = new TripBoardPresenter(tripEventsElement, pointsModel, filterModel);
+const tripBoardPresenter = new TripBoardPresenter(tripEventsElement, pointsModel, filterModel, api);
 const tripFilterPresenter = new TripFilterPresenter(tripControlsElement, filterModel, pointsModel);
-
-if (Object.values(state.tripInfo).some(Boolean)) {
-  render(tripMainElement, new InfoView(state.tripInfo), RenderPosition.AFTERBEGIN);
-}
-
 const tripTabsElement = new TabsView(state.tabs);
-render(tripControlsElement, tripTabsElement, RenderPosition.AFTERBEGIN);
-createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderPosition.BEFOREBEGIN);
+
+const createTripInfo = (points) => {
+  render(tripMainElement, new InfoView(calculateTripInfo(points)), RenderPosition.AFTERBEGIN);
+};
+
+const createTripMenu = () => {
+  render(tripControlsElement, tripTabsElement, RenderPosition.AFTERBEGIN);
+  createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderPosition.BEFOREBEGIN);
+};
 
 tripFilterPresenter.init();
 tripBoardPresenter.init();
@@ -79,5 +73,20 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (e
   evt.preventDefault();
   tripBoardPresenter.createTask();
 });
+
+api.getData()
+  .then((serverData) => {
+    pointsModel.setOffers(serverData.offers);
+    pointsModel.setDestinations(serverData.destinations);
+    pointsModel.setPoints(UpdateType.INIT, serverData.points);
+    if (serverData.points.length) {
+      createTripInfo(serverData.points);
+    }
+    createTripMenu();
+  })
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+    createTripMenu();
+  });
 
 
