@@ -364,7 +364,7 @@ export default class EditEventView extends Smart {
     if (evt.target.checked) {
       eventOffers.push(availableOffersOfEvent.find(({offerId}) => offerId === changedOffer));
     } else {
-      eventOffers = eventOffers.filter(({offerId}) => offerId !== changedOffer)
+      eventOffers = eventOffers.filter(({offerId}) => offerId !== changedOffer);
     }
     this.updateData({
       offers: eventOffers
