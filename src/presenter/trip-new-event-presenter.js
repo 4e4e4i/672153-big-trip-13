@@ -1,5 +1,4 @@
 import EditEventView from "../view/edit-event-view";
-import {nanoid} from "nanoid";
 import {UserAction, UpdateType, RenderPosition, FormMode, BLANK_POINT} from "../helpers/constants";
 import {remove, render} from "../helpers/utils/dom-helpers";
 
@@ -40,13 +39,31 @@ export default class TripNewEventPresenter {
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._editEventComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._editEventComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._editEventComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(point) {
     this._changeData(
         UserAction.ADD_POINT,
         UpdateType.MINOR,
-        Object.assign({id: nanoid()}, point)
+        point
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {

@@ -11,8 +11,7 @@
   },
   "dependencies": {
     "dayjs": "1.9.5",
-    "flatpickr": "4.6.6",
-    "nanoid": "^3.1.20"
+    "flatpickr": "4.6.6"
   },
   "devDependencies": {
     "css-loader": "5.0.1",
