@@ -82,22 +82,18 @@ export default class PointsModel extends Observer {
   static adaptToClient(point) {
     const adaptedPoint = Object.assign(
         {},
-        point,
         {
+          id: point.id,
           type: point.type.toUpperCase().replace(`-`, `_`),
           price: point.base_price,
           startTime: new Date(point.date_from),
           endTime: new Date(point.date_to),
+          destination: point.destination,
           isFavorite: point.is_favorite,
           totalPrice: getTotalPrice(point.base_price, point.offers),
           offers: point.offers.map(addOfferId)
         }
     );
-
-    delete adaptedPoint.base_price;
-    delete adaptedPoint.date_from;
-    delete adaptedPoint.date_to;
-    delete adaptedPoint.is_favorite;
 
     return adaptedPoint;
   }
@@ -105,22 +101,17 @@ export default class PointsModel extends Observer {
   static adaptToServer(point) {
     const adaptedPoint = Object.assign(
         {},
-        point,
         {
+          "id": point.id,
           "type": point.type.toLowerCase().replace(`_`, `-`),
           "base_price": point.price,
           "date_from": point.startTime,
           "date_to": point.endTime,
+          "destination": point.destination,
           "is_favorite": point.isFavorite,
           "offers": point.offers.map((offer) => ({title: offer.title, price: offer.price}))
         }
     );
-
-    delete adaptedPoint.price;
-    delete adaptedPoint.startTime;
-    delete adaptedPoint.endTime;
-    delete adaptedPoint.isFavorite;
-    delete adaptedPoint.totalPrice;
 
     return adaptedPoint;
   }

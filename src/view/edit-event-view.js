@@ -1,7 +1,9 @@
 import dayjs from "dayjs";
-import {EventType} from "../helpers/constants";
-import Smart from "./smart";
 import flatpickr from "flatpickr";
+
+import Smart from "./smart";
+
+import {EventType, FormMode, BLANK_POINT} from "../helpers/constants";
 
 import "flatpickr/dist/flatpickr.min.css";
 
@@ -10,21 +12,6 @@ const EVENTS = Object.values(EventType);
 const CALENDAR_DEFAULT_CONFIG = {
   dateFormat: `d/m/y H:i`,
   enableTime: true,
-};
-
-const BLANK_POINT = {
-  type: `TAXI`,
-  destination: {
-    name: ``,
-    description: ``,
-    pictures: []
-  },
-  startTime: new Date().getTime(),
-  endTime: new Date().getTime(),
-  offers: [],
-  isFavorite: false,
-  price: 0,
-  totalPrice: 0
 };
 
 const createEventsLabelsListTemplate = (type, id) => {
@@ -153,7 +140,7 @@ export const createTripEditEventTemplate = (tripEvent, destinations, availableOf
     id
   } = tripEvent;
 
-  const isEditForm = () => mode === `EDIT`;
+  const isEditForm = () => mode === FormMode.EDIT;
   const startTimeFormatted = dayjs(startTime).format(`DD/MM/YY HH:mm`);
   const endTimeFormatted = dayjs(endTime).format(`DD/MM/YY HH:mm`);
 
@@ -217,7 +204,7 @@ export const createTripEditEventTemplate = (tripEvent, destinations, availableOf
 };
 
 export default class EditEventView extends Smart {
-  constructor(tripEvent = BLANK_POINT, destinations = {}, availableOffers = {}, mode = `EDIT`) {
+  constructor(tripEvent = BLANK_POINT, destinations = {}, availableOffers = {}, mode = FormMode.EDIT) {
     super();
     this._data = tripEvent;
     this._destinations = destinations;
@@ -254,7 +241,7 @@ export default class EditEventView extends Smart {
   }
 
   restoreHandlers() {
-    if (this._mode === `EDIT`) {
+    if (this._mode === FormMode.EDIT) {
       this.setCloseFormClickHandler(this._callback.closeFormClick);
     }
     this._setInnerHandlers();
@@ -357,15 +344,12 @@ export default class EditEventView extends Smart {
     });
   }
 
-  _offersChangeStatusHandler(evt) {
-    const changedOffer = evt.target.dataset.offer;
+  _offersChangeStatusHandler({target}) {
+    const changedOffer = target.dataset.offer;
     const availableOffersOfEvent = this._availableOffers[this._data.type];
-    let eventOffers = [...this._data.offers];
-    if (evt.target.checked) {
-      eventOffers.push(availableOffersOfEvent.find(({offerId}) => offerId === changedOffer));
-    } else {
-      eventOffers = eventOffers.filter(({offerId}) => offerId !== changedOffer);
-    }
+    let eventOffers = target.checked
+      ? [...this._data.offers, availableOffersOfEvent.find(({offerId}) => offerId === changedOffer)]
+      : this._data.offers.filter(({offerId}) => offerId !== changedOffer);
     this.updateData({
       offers: eventOffers
     });

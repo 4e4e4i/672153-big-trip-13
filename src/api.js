@@ -12,10 +12,12 @@ const SuccessHTTPStatusRange = {
   MAX: 299
 };
 
-const adaptOffersToClient = (acc, currentValue) => {
-  const adaptedOffers = currentValue.offers.map(addOfferId);
-  acc[currentValue.type.toUpperCase().replace(`-`, `_`)] = adaptedOffers;
-  return acc;
+const adaptOffersToClient = (offers) => {
+  return offers.reduce((acc, currentValue) => {
+    const adaptedOffers = currentValue.offers.map(addOfferId);
+    acc[currentValue.type.toUpperCase().replace(`-`, `_`)] = adaptedOffers;
+    return acc;
+  }, {});
 };
 
 export const addOfferId = (offer) => {
@@ -25,9 +27,11 @@ export const addOfferId = (offer) => {
   );
 };
 
-const adaptDestinationsToClient = (acc, currentValue) => {
-  acc[currentValue.name] = currentValue;
-  return acc;
+const adaptDestinationsToClient = (destinations) => {
+  return destinations.reduce((acc, currentValue) => {
+    acc[currentValue.name] = currentValue;
+    return acc;
+  }, {});
 };
 
 export default class Api {
@@ -61,13 +65,13 @@ export default class Api {
   getOffers() {
     return this._load({url: `offers`})
       .then(Api.toJSON)
-      .then((offers) => offers.reduce(adaptOffersToClient, {}));
+      .then((offers) => adaptOffersToClient(offers));
   }
 
   getDestinations() {
     return this._load({url: `destinations`})
       .then(Api.toJSON)
-      .then((destinations) => destinations.reduce(adaptDestinationsToClient, {}));
+      .then((destinations) => adaptDestinationsToClient(destinations));
   }
 
   updatePoint(point) {

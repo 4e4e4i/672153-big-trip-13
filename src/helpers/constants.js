@@ -11,6 +11,11 @@ export const EventType = {
   RESTAURANT: `Restaurant`
 };
 
+export const FormMode = {
+  EDIT: `EDIT`,
+  CREATE: `CREATE`
+};
+
 export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
@@ -42,4 +47,19 @@ export const UpdateType = {
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
   INIT: `INIT`
+};
+
+export const BLANK_POINT = {
+  type: `TAXI`,
+  destination: {
+    name: ``,
+    description: ``,
+    pictures: []
+  },
+  startTime: new Date().getTime(),
+  endTime: new Date().getTime(),
+  offers: [],
+  isFavorite: false,
+  price: 0,
+  totalPrice: 0
 };

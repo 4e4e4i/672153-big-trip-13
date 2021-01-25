@@ -75,12 +75,12 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (e
 });
 
 api.getData()
-  .then((serverData) => {
-    pointsModel.setOffers(serverData.offers);
-    pointsModel.setDestinations(serverData.destinations);
-    pointsModel.setPoints(UpdateType.INIT, serverData.points);
-    if (serverData.points.length) {
-      createTripInfo(serverData.points);
+  .then(({points, offers, destinations}) => {
+    pointsModel.setOffers(offers);
+    pointsModel.setDestinations(destinations);
+    pointsModel.setPoints(UpdateType.INIT, points);
+    if (points.length) {
+      createTripInfo(points);
     }
     createTripMenu();
   })
