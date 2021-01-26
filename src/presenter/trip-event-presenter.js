@@ -11,6 +11,12 @@ const Mode = {
   EDITING: `EDITING`
 };
 
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+};
+
 export default class TripEventPresenter {
   constructor(eventListContainer, changeData, changeMode) {
     this._eventListContainer = eventListContainer;
@@ -57,7 +63,8 @@ export default class TripEventPresenter {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._editEventComponent, prevEditEventComponent);
+      replace(this._eventComponent, prevEditEventComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevEventComponent);
@@ -74,6 +81,35 @@ export default class TripEventPresenter {
     remove(this._eventComponent);
     remove(this._editEventComponent);
     remove(this._eventItemComponent);
+  }
+
+  setViewState(state) {
+    const resetFormState = () => {
+      this._editEventComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._editEventComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.DELETING:
+        this._editEventComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.ABORTING:
+        this._eventComponent.shake(resetFormState);
+        this._editEventComponent.shake(resetFormState);
+        break;
+    }
   }
 
   _switchEventToForm() {
@@ -124,7 +160,6 @@ export default class TripEventPresenter {
         isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
         update
     );
-    this._switchFormToEvent();
   }
 
   _handleCloseForm() {

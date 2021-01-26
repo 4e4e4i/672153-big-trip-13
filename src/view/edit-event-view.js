@@ -14,7 +14,7 @@ const CALENDAR_DEFAULT_CONFIG = {
   enableTime: true,
 };
 
-const createEventsLabelsListTemplate = (type, id) => {
+const createEventsLabelsListTemplate = (type, id, isDisabled) => {
   if (!EVENTS.length) {
     return ``;
   }
@@ -31,6 +31,7 @@ const createEventsLabelsListTemplate = (type, id) => {
           type="radio"
           name="event-type"
           value="${eventTypeLowerCase}"
+          ${isDisabled ? `disabled` : ``}
         >
         <label class="event__type-label  event__type-label--${eventTypeLowerCase}" for="event-type-${eventTypeLowerCase}-${id}">${eventType}</label>
       </div>
@@ -47,7 +48,7 @@ const createEventsLabelsListTemplate = (type, id) => {
   `;
 };
 
-const createOffersFormTemplate = (offers, availableOffers = []) => {
+const createOffersFormTemplate = (offers, availableOffers = [], isDisabled) => {
   if (!availableOffers.length) {
     return ``;
   }
@@ -65,6 +66,7 @@ const createOffersFormTemplate = (offers, availableOffers = []) => {
           name="event-offer-${offerId}"
           data-offer="${offerId}"
           ${isChecked}
+          ${isDisabled ? `disabled` : ``}
         >
         <label class="event__offer-label" for="event-offer-${offerId}">
           <span class="event__offer-title">${offerName}</span>
@@ -114,9 +116,16 @@ const createdEventDestinationTemplate = (destination = {}) => {
     `;
 };
 
-const createCitiesInputTemplate = (selectedCity, destinations, id) => {
+const createCitiesInputTemplate = (selectedCity, destinations, id, isDisabled) => {
   return `
-    <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${selectedCity}" list="destination-list-${id}">
+    <input
+      class="event__input  event__input--destination"
+      id="event-destination-${id}"
+      type="text" name="event-destination"
+      value="${selectedCity}"
+      list="destination-list-${id}"
+      ${isDisabled ? `disabled` : ``}
+    >
     <datalist id="destination-list-${id}">
       ${destinations.map(({name}) => `
         <option value="${name}"></option>
@@ -137,7 +146,10 @@ export const createTripEditEventTemplate = (tripEvent, destinations, availableOf
     endTime = new Date(),
     price = 0,
     offers = [],
-    id
+    id,
+    isDisabled,
+    isSaving,
+    isDeleting
   } = tripEvent;
 
   const isEditForm = () => mode === FormMode.EDIT;
@@ -158,24 +170,43 @@ export const createTripEditEventTemplate = (tripEvent, destinations, availableOf
               alt="Event type icon"
             >
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <input
+            class="event__type-toggle  visually-hidden"
+            id="event-type-toggle-${id}"
+            type="checkbox"
+            ${isDisabled ? `disabled` : ``}
+          >
 
-          ${createEventsLabelsListTemplate(type, id)}
+          ${createEventsLabelsListTemplate(type, id, isDisabled)}
         </div>
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-${id}">
             ${EventType[type]}
           </label>
-          ${createCitiesInputTemplate(destination.name, Object.values(destinations), id)}
+          ${createCitiesInputTemplate(destination.name, Object.values(destinations), id, isDisabled)}
         </div>
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-${id}">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${startTimeFormatted}">
+          <input
+            class="event__input  event__input--time"
+            id="event-start-time-${id}"
+            type="text"
+            name="event-start-time"
+            value="${startTimeFormatted}"
+            ${isDisabled ? `disabled` : ``}
+          >
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${endTimeFormatted}">
+          <input
+            class="event__input  event__input--time"
+            id="event-end-time-${id}"
+            type="text"
+            name="event-end-time"
+            value="${endTimeFormatted}"
+            ${isDisabled ? `disabled` : ``}
+          >
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -183,11 +214,30 @@ export const createTripEditEventTemplate = (tripEvent, destinations, availableOf
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${price}">
+          <input
+            class="event__input  event__input--price"
+            id="event-price-${id}"
+            type="text"
+            name="event-price"
+            value="${price}"
+            ${isDisabled ? `disabled` : ``}
+          >
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${isEditForm() ? `Delete` : `Cancel`}</button>
+        <button
+          class="event__save-btn  btn  btn--blue"
+          type="submit"
+          ${isDisabled ? `disabled` : ``}
+        >
+          ${isSaving ? `Saving...` : `Save`}
+        </button>
+        <button
+           class="event__reset-btn"
+           type="reset"
+           ${isDisabled ? `disabled` : ``}
+        >
+          ${isEditForm() ? `${isDeleting ? `Deleting..` : `Delete`}` : `Cancel`}
+        </button>
 
         ${isEditForm() ? `
           <button class="event__rollup-btn" type="button">
@@ -196,7 +246,7 @@ export const createTripEditEventTemplate = (tripEvent, destinations, availableOf
         ` : ``}
       </header>
       <section class="event__details">
-        ${createOffersFormTemplate(offers, availableOffers[type])}
+        ${createOffersFormTemplate(offers, availableOffers[type], isDisabled)}
         ${createdEventDestinationTemplate(destination)}
       </section>
     </form>`
@@ -206,7 +256,7 @@ export const createTripEditEventTemplate = (tripEvent, destinations, availableOf
 export default class EditEventView extends Smart {
   constructor(tripEvent = BLANK_POINT, destinations = {}, availableOffers = {}, mode = FormMode.EDIT) {
     super();
-    this._data = tripEvent;
+    this._data = EditEventView.parsePointToData(tripEvent);
     this._destinations = destinations;
     this._availableOffers = availableOffers;
     this._mode = mode;
@@ -252,7 +302,7 @@ export default class EditEventView extends Smart {
 
   reset(data) {
     this.updateData(
-        data
+        EditEventView.parsePointToData(data)
     );
   }
 
@@ -324,7 +374,7 @@ export default class EditEventView extends Smart {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._data);
+    this._callback.formSubmit(EditEventView.parseDataToPoint(this._data));
   }
 
   _closeFormClickHandler(evt) {
@@ -359,7 +409,7 @@ export default class EditEventView extends Smart {
     this._priceInputEl.value = evt.target.value.replace(/[^\d]/g, ``);
 
     this.updateData({
-      price: evt.target.value || 0
+      price: Number(evt.target.value) || 0
     });
   }
 
@@ -392,13 +442,35 @@ export default class EditEventView extends Smart {
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  _formDeleteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.deleteClick(this._data);
-  }
-
   setDeleteClickHandler(callback) {
     this._callback.deleteClick = callback;
     this.getElement().querySelector(`button[type=reset]`).addEventListener(`click`, this._formDeleteClickHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EditEventView.parseDataToPoint(this._data));
+  }
+
+  static parsePointToData(point) {
+    return Object.assign(
+        {},
+        point,
+        {
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        }
+    );
+  }
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
+    return data;
   }
 }
