@@ -1,6 +1,6 @@
 import EditEventView from "../view/edit-event-view";
 import {nanoid} from "nanoid";
-import {UserAction, UpdateType, RenderPosition} from "../helpers/constants";
+import {UserAction, UpdateType, RenderPosition, FormMode, BLANK_POINT} from "../helpers/constants";
 import {remove, render} from "../helpers/utils/dom-helpers";
 
 export default class TripNewEventPresenter {
@@ -15,12 +15,12 @@ export default class TripNewEventPresenter {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(destinations, availableOffers) {
     if (this._editEventComponent !== null) {
       return;
     }
 
-    this._editEventComponent = new EditEventView();
+    this._editEventComponent = new EditEventView(BLANK_POINT, destinations, availableOffers, FormMode.CREATE);
     this._editEventComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editEventComponent.setDeleteClickHandler(this._handleDeleteClick);
 

@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
-import {EventType, ADDITIONAL_OFFERS} from "../helpers/constants";
-import Smart from "./smart";
-import {getDestination} from "../mock/trip-event";
 import flatpickr from "flatpickr";
+
+import Smart from "./smart";
+
+import {EventType, FormMode, BLANK_POINT} from "../helpers/constants";
 
 import "flatpickr/dist/flatpickr.min.css";
 
@@ -11,21 +12,6 @@ const EVENTS = Object.values(EventType);
 const CALENDAR_DEFAULT_CONFIG = {
   dateFormat: `d/m/y H:i`,
   enableTime: true,
-};
-
-const BLANK_POINT = {
-  type: `TAXI`,
-  destination: {
-    name: ``,
-    description: ``,
-    photos: []
-  },
-  startTime: new Date().getTime(),
-  endTime: new Date().getTime(),
-  offers: ADDITIONAL_OFFERS[EventType.TAXI] || [],
-  isFavorite: false,
-  price: 0,
-  totalPrice: 0
 };
 
 const createEventsLabelsListTemplate = (type, id) => {
@@ -38,7 +24,14 @@ const createEventsLabelsListTemplate = (type, id) => {
     const isChecked = type.toLowerCase() === eventTypeLowerCase ? `checked` : ``;
     return `
       <div class="event__type-item">
-        <input id="event-type-${eventTypeLowerCase}-${id}" ${isChecked} class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventTypeLowerCase}">
+        <input
+          id="event-type-${eventTypeLowerCase}-${id}"
+          ${isChecked}
+          class="event__type-input  visually-hidden"
+          type="radio"
+          name="event-type"
+          value="${eventTypeLowerCase}"
+        >
         <label class="event__type-label  event__type-label--${eventTypeLowerCase}" for="event-type-${eventTypeLowerCase}-${id}">${eventType}</label>
       </div>
     `;
@@ -54,19 +47,26 @@ const createEventsLabelsListTemplate = (type, id) => {
   `;
 };
 
-const createOffersFormTemplate = (availableOffers, id) => {
+const createOffersFormTemplate = (offers, availableOffers = []) => {
   if (!availableOffers.length) {
     return ``;
   }
 
-  const offersSelectorsFragments = availableOffers.map((offer) => {
-    const {type: offerType, name: offerName, price: offerPrice, isChecked: isOfferChecked} = offer;
-    const isChecked = isOfferChecked ? `checked` : ``;
+  const offersSelectorsFragments = availableOffers.map((availableOffer) => {
+    const {title: offerName, price: offerPrice, offerId} = availableOffer;
+    const isChecked = offers.some((offer) => offer.title === availableOffer.title) ? `checked` : ``;
 
     return `
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerType}-${id}" type="checkbox" name="event-offer-${offerType}" ${isChecked}>
-        <label class="event__offer-label" for="event-offer-${offerType}-${id}">
+        <input
+          class="event__offer-checkbox  visually-hidden"
+          id="event-offer-${offerId}"
+          type="checkbox"
+          name="event-offer-${offerId}"
+          data-offer="${offerId}"
+          ${isChecked}
+        >
+        <label class="event__offer-label" for="event-offer-${offerId}">
           <span class="event__offer-title">${offerName}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offerPrice}</span>
@@ -94,14 +94,14 @@ const createPhotosTapeTemplate = (photos = []) => {
   return `
       <div class="event__photos-container">
         <div class="event__photos-tape">
-          ${photos.map((photoUrl) => `<img class="event__photo" src="${photoUrl}" alt="Event photo">`).join(``)}
+          ${photos.map(({description, src}) => `<img class="event__photo" src="${src}" alt="${description}">`).join(``)}
         </div>
       </div>
     `;
 };
 
 const createdEventDestinationTemplate = (destination = {}) => {
-  const {name, photos = [], description} = destination;
+  const {name, pictures = [], description} = destination;
   if (!name) {
     return ``;
   }
@@ -109,23 +109,23 @@ const createdEventDestinationTemplate = (destination = {}) => {
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${description}</p>
-        ${photos.length ? createPhotosTapeTemplate(photos) : ``}
+        ${pictures.length ? createPhotosTapeTemplate(pictures) : ``}
       </section>
     `;
 };
 
-const createCitiesInputTemplate = (selectedCity, cities, id) => {
+const createCitiesInputTemplate = (selectedCity, destinations, id) => {
   return `
     <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${selectedCity}" list="destination-list-${id}">
     <datalist id="destination-list-${id}">
-      ${cities.map((city) => `
-        <option value="${city}"></option>
+      ${destinations.map(({name}) => `
+        <option value="${name}"></option>
       `).join(``)}
     </datalist>
   `;
 };
 
-export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
+export const createTripEditEventTemplate = (tripEvent, destinations, availableOffers, mode) => {
   const {
     type = `TAXI`,
     destination = {
@@ -140,7 +140,7 @@ export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
     id
   } = tripEvent;
 
-  const isEditForm = () => mode === `EDIT`;
+  const isEditForm = () => mode === FormMode.EDIT;
   const startTimeFormatted = dayjs(startTime).format(`DD/MM/YY HH:mm`);
   const endTimeFormatted = dayjs(endTime).format(`DD/MM/YY HH:mm`);
 
@@ -150,7 +150,13 @@ export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${EventType[type].toLowerCase()}.png" alt="Event type icon">
+            <img
+              class="event__type-icon"
+              width="17"
+              height="17"
+              src="img/icons/${EventType[type].toLowerCase()}.png"
+              alt="Event type icon"
+            >
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -161,7 +167,7 @@ export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
           <label class="event__label  event__type-output" for="event-destination-${id}">
             ${EventType[type]}
           </label>
-          ${createCitiesInputTemplate(destination.name, cities, id)}
+          ${createCitiesInputTemplate(destination.name, Object.values(destinations), id)}
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -190,7 +196,7 @@ export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
         ` : ``}
       </header>
       <section class="event__details">
-        ${createOffersFormTemplate(offers, id)}
+        ${createOffersFormTemplate(offers, availableOffers[type])}
         ${createdEventDestinationTemplate(destination)}
       </section>
     </form>`
@@ -198,15 +204,17 @@ export const createTripEditEventTemplate = (tripEvent, cities, mode) => {
 };
 
 export default class EditEventView extends Smart {
-  constructor(tripEvent = BLANK_POINT, cities = [], mode = `EDIT`) {
+  constructor(tripEvent = BLANK_POINT, destinations = {}, availableOffers = {}, mode = FormMode.EDIT) {
     super();
     this._data = tripEvent;
-    this._cities = cities;
+    this._destinations = destinations;
+    this._availableOffers = availableOffers;
     this._mode = mode;
     this._datepickers = {};
     this._priceInputEl = null;
 
     this._eventTypeToggleHandler = this._eventTypeToggleHandler.bind(this);
+    this._offersChangeStatusHandler = this._offersChangeStatusHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._cityToggleHandler = this._cityToggleHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
@@ -229,13 +237,15 @@ export default class EditEventView extends Smart {
   }
 
   getTemplate() {
-    return createTripEditEventTemplate(this._data, this._cities, this._mode);
+    return createTripEditEventTemplate(this._data, this._destinations, this._availableOffers, this._mode);
   }
 
   restoreHandlers() {
+    if (this._mode === FormMode.EDIT) {
+      this.setCloseFormClickHandler(this._callback.closeFormClick);
+    }
     this._setInnerHandlers();
     this._setDatepickers();
-    this.setCloseFormClickHandler(this._callback.closeFormClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
@@ -302,6 +312,12 @@ export default class EditEventView extends Smart {
       .querySelector(`.event__input--destination`)
       .addEventListener(`change`, this._cityToggleHandler);
 
+    this.getElement()
+      .querySelectorAll(`.event__offer-checkbox`)
+      .forEach((checkbox) => {
+        checkbox.addEventListener(`change`, this._offersChangeStatusHandler);
+      });
+
     this._priceInputEl = this.getElement().querySelector(`.event__input--price`);
     this._priceInputEl.addEventListener(`change`, this._priceChangeHandler);
   }
@@ -324,7 +340,18 @@ export default class EditEventView extends Smart {
     }
     this.updateData({
       type,
-      offers: ADDITIONAL_OFFERS[type] || []
+      offers: []
+    });
+  }
+
+  _offersChangeStatusHandler({target}) {
+    const changedOffer = target.dataset.offer;
+    const availableOffersOfEvent = this._availableOffers[this._data.type];
+    let eventOffers = target.checked
+      ? [...this._data.offers, availableOffersOfEvent.find(({offerId}) => offerId === changedOffer)]
+      : this._data.offers.filter(({offerId}) => offerId !== changedOffer);
+    this.updateData({
+      offers: eventOffers
     });
   }
 
@@ -339,7 +366,7 @@ export default class EditEventView extends Smart {
   _cityToggleHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      destination: getDestination(evt.target.value)
+      destination: this._destinations[evt.target.value]
     });
   }
 

@@ -11,78 +11,15 @@ export const EventType = {
   RESTAURANT: `Restaurant`
 };
 
+export const FormMode = {
+  EDIT: `EDIT`,
+  CREATE: `CREATE`
+};
+
 export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
   PAST: `past`
-};
-
-export const CITIES = [`Tokio`, `Kioto`, `Osaka`, `Nagoya`, `Saporo`];
-
-export const ADDITIONAL_OFFERS = {
-  FLIGHT: [
-    {
-      type: `luggage`,
-      name: `Add luggage`,
-      price: 50,
-      isChecked: false
-    },
-    {
-      type: `comfort`,
-      name: `Switch to comfort`,
-      price: 80,
-      isChecked: false
-    },
-    {
-      type: `meal`,
-      name: `Add meal`,
-      price: 15,
-      isChecked: false
-    },
-    {
-      type: `seats`,
-      name: `Choose seats`,
-      price: 5,
-      isChecked: false
-    }
-  ],
-  SHIP: [
-    {
-      type: `luggage`,
-      name: `Add luggage`,
-      price: 50,
-      isChecked: false
-    },
-    {
-      type: `comfort`,
-      name: `Switch to comfort`,
-      price: 80,
-      isChecked: false
-    },
-    {
-      type: `meal`,
-      name: `Add meal`,
-      price: 15,
-      isChecked: false
-    },
-  ],
-  TRAIN: [
-    {
-      type: `comfort`,
-      name: `Switch to comfort`,
-      price: 80
-    },
-    {
-      type: `meal`,
-      name: `Add meal`,
-      price: 15
-    },
-    {
-      type: `seats`,
-      name: `Choose seats`,
-      price: 5
-    }
-  ]
 };
 
 export const RenderPosition = {
@@ -108,5 +45,21 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
+};
+
+export const BLANK_POINT = {
+  type: `TAXI`,
+  destination: {
+    name: ``,
+    description: ``,
+    pictures: []
+  },
+  startTime: new Date().getTime(),
+  endTime: new Date().getTime(),
+  offers: [],
+  isFavorite: false,
+  price: 0,
+  totalPrice: 0
 };

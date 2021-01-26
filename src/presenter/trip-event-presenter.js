@@ -2,7 +2,7 @@ import EventItemView from "../view/event-item-view";
 import EventView from "../view/event-view";
 import EditEventView from "../view/edit-event-view";
 
-import {CITIES, RenderPosition, UserAction, UpdateType} from "../helpers/constants";
+import {RenderPosition, UserAction, UpdateType} from "../helpers/constants";
 import {render, replace, remove} from "../helpers/utils/dom-helpers";
 import {isDateEqual} from "../helpers/utils/is-dates-equal";
 
@@ -30,14 +30,14 @@ export default class TripEventPresenter {
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
-  init(tripEvent) {
+  init(tripEvent, destinations, availableOffers) {
     this._tripEvent = tripEvent;
 
     const prevEventComponent = this._eventComponent;
     const prevEditEventComponent = this._editEventComponent;
 
     this._eventComponent = new EventView(tripEvent);
-    this._editEventComponent = new EditEventView(tripEvent, CITIES);
+    this._editEventComponent = new EditEventView(tripEvent, destinations, availableOffers);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventComponent.setSwitchFavoriteClickHandler(this._handleSwitchFavoriteClick);
