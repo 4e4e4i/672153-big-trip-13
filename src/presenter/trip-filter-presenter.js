@@ -1,6 +1,7 @@
 import FiltersView from "../view/filters-view";
-import {render, replace, remove, createHiddenTitle} from "../helpers/utils/dom-helpers";
+
 import {FilterType, RenderPosition, UpdateType} from "../helpers/constants";
+import {render, replace, remove, createHiddenTitle} from "../helpers/utils/dom-helpers";
 
 export default class TripFilterPresenter {
   constructor(filterContainer, filterModel, pointsModel) {

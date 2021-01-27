@@ -1,3 +1,28 @@
+export const TRANSPORT_TYPES = [`TAXI`, `BUS`, `TRAIN`, `SHIP`, `TRANSPORT`, `DRIVE`, `FLIGHT`];
+
+export const ChartConfiguration = {
+  BAR_HEIGHT: 55,
+  BACKGROUND_COLOR: `#ffffff`,
+  FONT_COLOR: `#000000`,
+  CHART_TYPE: `horizontalBar`,
+  CHART_PADDING_LEFT: 100,
+  FONT_SIZE: 13,
+  TITLE_FONT_SIZE: 23,
+  SCALE_Y_AXES_TICKS_PADDING: 5,
+  BAR_THICKNESS: 44,
+  MIN_BAR_LENGTH: 50,
+  MONEY_CHART_TEXT: `MONEY`,
+  TRANSPORT_CHART_TEXT: `TRANSPORT`,
+  TIME_SPEND_TEXT: `TIME-SPEND`,
+};
+
+export const TimeInMs = {
+  DAY: 86400000,
+  HOUR: 3600000,
+  MINUTE: 60000,
+  SECOND: 1000,
+};
+
 export const EventType = {
   TAXI: `Taxi`,
   BUS: `Bus`,
@@ -62,4 +87,9 @@ export const BLANK_POINT = {
   isFavorite: false,
   price: 0,
   totalPrice: 0
+};
+
+export const MenuItem = {
+  TABLE: `TABLE`,
+  STATISTICS: `STATISTICS`
 };

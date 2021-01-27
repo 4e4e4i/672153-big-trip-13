@@ -1,4 +1,5 @@
 import EditEventView from "../view/edit-event-view";
+
 import {UserAction, UpdateType, RenderPosition, FormMode, BLANK_POINT} from "../helpers/constants";
 import {remove, render} from "../helpers/utils/dom-helpers";
 

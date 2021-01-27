@@ -1,14 +1,11 @@
 import dayjs from "dayjs";
 import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 import Smart from "./smart";
 
 import {EventType, FormMode, BLANK_POINT} from "../helpers/constants";
-
-import "flatpickr/dist/flatpickr.min.css";
-
 const EVENTS = Object.values(EventType);
-
 const CALENDAR_DEFAULT_CONFIG = {
   dateFormat: `d/m/y H:i`,
   enableTime: true,
