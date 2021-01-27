@@ -1,4 +1,5 @@
 import Abstract from "./abstract";
+
 import {MenuItem} from "../helpers/constants";
 
 export const createTripTabsTemplate = () => {

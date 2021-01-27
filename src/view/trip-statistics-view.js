@@ -1,7 +1,8 @@
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import {ChartConfiguration, EventType, TimeInMs, TRANSPORT_TYPES} from '../helpers/constants.js';
 import Smart from "./smart";
+
+import {ChartConfiguration, EventType, TimeInMs, TRANSPORT_TYPES} from '../helpers/constants.js';
 
 const createStatisticsTemplate = () => {
   return (

@@ -1,4 +1,5 @@
 import Observer from "../helpers/utils/observer";
+
 import {FilterType} from "../helpers/constants";
 
 export default class FilterModel extends Observer {

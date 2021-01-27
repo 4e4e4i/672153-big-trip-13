@@ -1,11 +1,12 @@
 import SortView from "../view/sort-view";
 import EventListView from "../view/event-list-view";
 import TripMessageView from "../view/trip-message-view";
+import TripEventPresenter, {State as PointPresenterViewState} from "./trip-event-presenter";
+import TripNewEventPresenter from "./trip-new-event-presenter";
+
 import {RenderPosition, SortType, UpdateType, UserAction} from "../helpers/constants";
 import {createHiddenTitle, remove, render} from "../helpers/utils/dom-helpers";
 import {sortByField} from "../helpers/utils/sort-by-field";
-import TripEventPresenter, {State as PointPresenterViewState} from "./trip-event-presenter";
-import TripNewEventPresenter from "./trip-new-event-presenter";
 import {FILTER} from "../helpers/utils/filter";
 
 export default class TripBoardPresenter {

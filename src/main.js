@@ -4,10 +4,10 @@ import TripBoardPresenter from "./presenter/trip-board-presenter";
 import TripFilterPresenter from "./presenter/trip-filter-presenter";
 import PointsModel from "./model/points-model";
 import FilterModel from "./model/filter-model";
+import Api from "./api";
 
 import {MenuItem, RenderPosition, UpdateType, FilterType} from "./helpers/constants";
 import {render, createHiddenTitle, remove} from "./helpers/utils/dom-helpers";
-import Api from "./api";
 
 const AUTHORIZATION = `Basic asldfkjlk3213dsaiii33ud`;
 const END_POINT = `https://13.ecmascript.pages.academy/big-trip`;
