@@ -1,7 +1,7 @@
 import SortView from "../view/sort-view";
 import EventListView from "../view/event-list-view";
 import TripMessageView from "../view/trip-message-view";
-import {FilterType, RenderPosition, SortType, UpdateType, UserAction} from "../helpers/constants";
+import {RenderPosition, SortType, UpdateType, UserAction} from "../helpers/constants";
 import {createHiddenTitle, remove, render} from "../helpers/utils/dom-helpers";
 import {sortByField} from "../helpers/utils/sort-by-field";
 import TripEventPresenter, {State as PointPresenterViewState} from "./trip-event-presenter";
@@ -13,7 +13,7 @@ export default class TripBoardPresenter {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._boardContainer = boardContainer;
-    this._eventListComponent = new EventListView().getElement();
+    this._eventListComponent = new EventListView();
     this._loadingMessageComponent = null;
     this._sortComponent = null;
     this._tripMessageView = null;
@@ -29,21 +29,26 @@ export default class TripBoardPresenter {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
-    this._tripNewEventPresenter = new TripNewEventPresenter(this._eventListComponent, this._handleViewAction);
+    this._tripNewEventPresenter = new TripNewEventPresenter(this._eventListComponent.getElement(), this._handleViewAction);
+    createHiddenTitle({text: `Trip events`, level: 2}, this._boardContainer, RenderPosition.AFTERBEGIN);
   }
 
   init() {
-    createHiddenTitle({text: `Trip events`, level: 2}, this._boardContainer, RenderPosition.AFTERBEGIN);
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderTripBoard();
   }
 
   createTask() {
-    this._activeSort = SortType.DAY;
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._tripNewEventPresenter.init(this._destinations, this._availableOffers);
+  }
+
+  destroy() {
+    this._clearBoard({resetSortType: true});
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
   }
 
   _getPoints() {
@@ -147,13 +152,13 @@ export default class TripBoardPresenter {
   }
 
   _renderTripEvent(event) {
-    const tripEventPresenter = new TripEventPresenter(this._eventListComponent, this._handleViewAction, this._handleModeChange);
+    const tripEventPresenter = new TripEventPresenter(this._eventListComponent.getElement(), this._handleViewAction, this._handleModeChange);
     tripEventPresenter.init(event, this._destinations, this._availableOffers);
     this._tripEventPresenter[event.id] = tripEventPresenter;
   }
 
   _renderTripList(points) {
-    render(this._boardContainer, this._eventListComponent, RenderPosition.BEFOREEND);
+    render(this._boardContainer, this._eventListComponent.getElement(), RenderPosition.BEFOREEND);
     points.forEach((tripEvent) => this._renderTripEvent(tripEvent));
   }
 
