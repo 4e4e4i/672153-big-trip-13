@@ -29,8 +29,8 @@ export default class TripFilterPresenter {
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
-      render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
-      createHiddenTitle({text: `Filter events`, level: 2}, this._filterComponent, RenderPosition.BEFOREBEGIN);
+      render(this._filterContainer, this._filterComponent, RenderPosition.BEFORE_END);
+      createHiddenTitle({text: `Filter events`, level: 2}, this._filterComponent, RenderPosition.BEFORE_BEGIN);
       return;
     }
 

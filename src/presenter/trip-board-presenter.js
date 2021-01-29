@@ -4,10 +4,9 @@ import TripMessageView from "../view/trip-message-view";
 import TripEventPresenter, {State as PointPresenterViewState} from "./trip-event-presenter";
 import TripNewEventPresenter from "./trip-new-event-presenter";
 
-import {RenderPosition, SortType, UpdateType, UserAction} from "../helpers/constants";
+import {FILTER, RenderPosition, SortType, UpdateType, UserAction} from "../helpers/constants";
 import {createHiddenTitle, remove, render} from "../helpers/utils/dom-helpers";
-import {sortByField} from "../helpers/utils/sort-by-field";
-import {FILTER} from "../helpers/utils/filter";
+import {sortByField} from "../helpers/utils/helpers";
 
 export default class TripBoardPresenter {
   constructor(boardContainer, pointsModel, filterModel, api) {
@@ -31,7 +30,7 @@ export default class TripBoardPresenter {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._tripNewEventPresenter = new TripNewEventPresenter(this._eventListComponent.getElement(), this._handleViewAction);
-    createHiddenTitle({text: `Trip events`, level: 2}, this._boardContainer, RenderPosition.AFTERBEGIN);
+    createHiddenTitle({text: `Trip events`, level: 2}, this._boardContainer, RenderPosition.AFTER_BEGIN);
   }
 
   init() {
@@ -149,7 +148,7 @@ export default class TripBoardPresenter {
 
     this._sortComponent = new SortView(this._activeSort);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-    render(this._boardContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    render(this._boardContainer, this._sortComponent, RenderPosition.BEFORE_END);
   }
 
   _renderTripEvent(event) {
@@ -159,20 +158,20 @@ export default class TripBoardPresenter {
   }
 
   _renderTripList(points) {
-    render(this._boardContainer, this._eventListComponent.getElement(), RenderPosition.BEFOREEND);
+    render(this._boardContainer, this._eventListComponent.getElement(), RenderPosition.BEFORE_END);
     points.forEach((tripEvent) => this._renderTripEvent(tripEvent));
   }
 
   _renderLoading() {
     const loadingMessage = `Loading...`;
     this._initMessageBoard(`_loadingMessageComponent`, loadingMessage);
-    render(this._boardContainer, this._loadingMessageComponent.getElement(), RenderPosition.BEFOREEND);
+    render(this._boardContainer, this._loadingMessageComponent.getElement(), RenderPosition.BEFORE_END);
   }
 
   _renderEmptyTripList() {
     const emptyMessage = `Click New Event to create your first point`;
     this._initMessageBoard(`_tripMessageView`, emptyMessage);
-    render(this._boardContainer, this._tripMessageView.getElement(), RenderPosition.BEFOREEND);
+    render(this._boardContainer, this._tripMessageView.getElement(), RenderPosition.BEFORE_END);
   }
 
   _initMessageBoard(componentView, message) {

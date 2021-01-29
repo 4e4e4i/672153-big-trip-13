@@ -30,8 +30,8 @@ const tripTabsElement = new TabsView();
 let statisticsComponent = null;
 
 const createTripMenu = () => {
-  render(tripControlsElement, tripTabsElement, RenderPosition.AFTERBEGIN);
-  createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderPosition.BEFOREBEGIN);
+  render(tripControlsElement, tripTabsElement, RenderPosition.AFTER_BEGIN);
+  createHiddenTitle({text: `Switch trip view`, level: 2}, tripTabsElement, RenderPosition.BEFORE_BEGIN);
 };
 
 const handleSiteMenuClick = (menuItem) => {
@@ -45,7 +45,7 @@ const handleSiteMenuClick = (menuItem) => {
       tripTabsElement.setMenuItem(MenuItem.STATISTICS);
       tripBoardPresenter.destroy();
       statisticsComponent = new TripStatisticsView(pointsModel);
-      render(siteMainContainer, statisticsComponent, RenderPosition.BEFOREEND);
+      render(siteMainContainer, statisticsComponent, RenderPosition.BEFORE_END);
       break;
   }
 };

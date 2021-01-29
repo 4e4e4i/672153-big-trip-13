@@ -1,3 +1,5 @@
+import {isPointFromTheFuture, isPointFromThePast} from "./utils/helpers";
+
 export const TRANSPORT_TYPES = [`TAXI`, `BUS`, `TRAIN`, `SHIP`, `TRANSPORT`, `DRIVE`, `FLIGHT`];
 
 export const ChartConfiguration = {
@@ -48,9 +50,9 @@ export const FilterType = {
 };
 
 export const RenderPosition = {
-  BEFOREBEGIN: `beforebegin`,
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
+  BEFORE_BEGIN: `beforebegin`,
+  AFTER_BEGIN: `afterbegin`,
+  BEFORE_END: `beforeend`
 };
 
 export const SortType = {
@@ -92,4 +94,10 @@ export const BLANK_POINT = {
 export const MenuItem = {
   TABLE: `TABLE`,
   STATISTICS: `STATISTICS`
+};
+
+export const FILTER = {
+  [FilterType.EVERYTHING]: (points) => points.slice(),
+  [FilterType.FUTURE]: (points) => points.filter(isPointFromTheFuture),
+  [FilterType.PAST]: (points) => points.filter(isPointFromThePast)
 };
