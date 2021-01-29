@@ -1,6 +1,7 @@
 import Abstract from "./abstract";
 
 import {SortType} from "../helpers/constants";
+
 const DISABLED_SORT_TYPES = [SortType.EVENT, SortType.TIME, SortType.OFFERS];
 
 export const createTripSortTemplate = (activeSort = `day`) => {

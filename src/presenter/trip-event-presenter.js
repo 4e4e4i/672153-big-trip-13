@@ -4,7 +4,7 @@ import EditEventView from "../view/edit-event-view";
 
 import {RenderPosition, UserAction, UpdateType} from "../helpers/constants";
 import {render, replace, remove} from "../helpers/utils/dom-helpers";
-import {isDateEqual} from "../helpers/utils/is-dates-equal";
+import {isDateEqual, isEsc} from "../helpers/utils/helpers";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -51,10 +51,10 @@ export default class TripEventPresenter {
     this._editEventComponent.setCloseFormClickHandler(this._handleCloseForm);
     this._editEventComponent.setDeleteClickHandler(this._handleDeleteClick);
 
-    render(this._eventItemComponent.getElement(), this._eventComponent, RenderPosition.BEFOREEND);
+    render(this._eventItemComponent.getElement(), this._eventComponent, RenderPosition.BEFORE_END);
 
     if (prevEventComponent === null || prevEditEventComponent === null) {
-      render(this._eventListContainer, this._eventItemComponent.getElement(), RenderPosition.BEFOREEND);
+      render(this._eventListContainer, this._eventItemComponent.getElement(), RenderPosition.BEFORE_END);
       return;
     }
 
@@ -126,7 +126,7 @@ export default class TripEventPresenter {
   }
 
   _escKeyDownHandler(evt) {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
+    if (isEsc(evt)) {
       evt.preventDefault();
       this._resetEditComponentData();
       this._switchFormToEvent();

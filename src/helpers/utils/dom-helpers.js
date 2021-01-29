@@ -1,5 +1,5 @@
-import {RenderPosition} from "../../constants";
-import Abstract from "../../../view/abstract";
+import {RenderPosition} from "../constants";
+import Abstract from "../../view/abstract";
 
 export const render = (container, child, place) => {
   container = getPolymorphElement(container, Abstract);
@@ -7,10 +7,10 @@ export const render = (container, child, place) => {
   child = getPolymorphElement(child, Abstract);
 
   switch (place) {
-    case RenderPosition.AFTERBEGIN:
+    case RenderPosition.AFTER_BEGIN:
       container.prepend(child);
       break;
-    case RenderPosition.BEFOREEND:
+    case RenderPosition.BEFORE_END:
       container.append(child);
       break;
   }

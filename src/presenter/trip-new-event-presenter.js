@@ -2,6 +2,7 @@ import EditEventView from "../view/edit-event-view";
 
 import {UserAction, UpdateType, RenderPosition, FormMode, BLANK_POINT} from "../helpers/constants";
 import {remove, render} from "../helpers/utils/dom-helpers";
+import {isEsc} from "../helpers/utils/helpers";
 
 export default class TripNewEventPresenter {
   constructor(tripEventListContainer, changeData) {
@@ -24,7 +25,7 @@ export default class TripNewEventPresenter {
     this._editEventComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editEventComponent.setDeleteClickHandler(this._handleDeleteClick);
 
-    render(this._tripEventListContainer, this._editEventComponent, RenderPosition.AFTERBEGIN);
+    render(this._tripEventListContainer, this._editEventComponent, RenderPosition.AFTER_BEGIN);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
@@ -72,7 +73,7 @@ export default class TripNewEventPresenter {
   }
 
   _escKeyDownHandler(evt) {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
+    if (isEsc(evt)) {
       evt.preventDefault();
       this.destroy();
     }

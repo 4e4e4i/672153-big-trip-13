@@ -5,6 +5,7 @@ import "flatpickr/dist/flatpickr.min.css";
 import Smart from "./smart";
 
 import {EventType, FormMode, BLANK_POINT} from "../helpers/constants";
+
 const EVENTS = Object.values(EventType);
 const CALENDAR_DEFAULT_CONFIG = {
   dateFormat: `d/m/y H:i`,
@@ -157,7 +158,7 @@ export const createTripEditEventTemplate = (tripEvent, destinations, availableOf
     `<form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
-          <label class="event__type  event__type-btn" for="event-type-toggle-1">
+          <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
             <span class="visually-hidden">Choose event type</span>
             <img
               class="event__type-icon"

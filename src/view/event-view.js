@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import Abstract from "./abstract";
 
-import {numberPad} from "../helpers/utils/number-pad";
+import {numberPad} from "../helpers/utils/helpers";
 import {EventType} from "../helpers/constants";
 
 const createTripEventOffersTemplate = (offers) => {
