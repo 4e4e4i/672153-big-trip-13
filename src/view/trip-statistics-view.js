@@ -101,7 +101,7 @@ export default class TripStatisticsView extends Smart {
     const totalDifference = allTripEventsTypes.reduce((totalTimeDifference, tripEvent) => {
       return totalTimeDifference + (tripEvent.endTime - tripEvent.startTime);
     }, 0);
-    const differenceInHours = Math.round(totalDifference / TimeInMs.HOUR);
+    const differenceInHours = Math.round(totalDifference / TimeInMs.DAY);
 
     return differenceInHours;
   }
@@ -147,7 +147,9 @@ export default class TripStatisticsView extends Smart {
           data: this._tripEventsChartData.map((item) => item.money),
           backgroundColor: ChartConfiguration.BACKGROUND_COLOR,
           hoverBackgroundColor: ChartConfiguration.BACKGROUND_COLOR,
-          anchor: `start`
+          anchor: `start`,
+          barThickness: ChartConfiguration.BAR_THICKNESS,
+          minBarLength: ChartConfiguration.MIN_BAR_LENGTH
         }]
       },
       options: {
@@ -184,8 +186,7 @@ export default class TripStatisticsView extends Smart {
             gridLines: {
               display: false,
               drawBorder: false
-            },
-            barThickness: ChartConfiguration.BAR_THICKNESS,
+            }
           }],
           xAxes: [{
             ticks: {
@@ -195,8 +196,7 @@ export default class TripStatisticsView extends Smart {
             gridLines: {
               display: false,
               drawBorder: false
-            },
-            minBarLength: ChartConfiguration.MIN_BAR_LENGTH
+            }
           }],
         },
         legend: {
@@ -221,7 +221,9 @@ export default class TripStatisticsView extends Smart {
           data: Object.values(this._transportEvents),
           backgroundColor: ChartConfiguration.BACKGROUND_COLOR,
           hoverBackgroundColor: ChartConfiguration.BACKGROUND_COLOR,
-          anchor: `start`
+          anchor: `start`,
+          barThickness: ChartConfiguration.BAR_THICKNESS,
+          minBarLength: ChartConfiguration.MIN_BAR_LENGTH
         }]
       },
       options: {
@@ -258,8 +260,7 @@ export default class TripStatisticsView extends Smart {
             gridLines: {
               display: false,
               drawBorder: false
-            },
-            barThickness: ChartConfiguration.BAR_THICKNESS,
+            }
           }],
           xAxes: [{
             ticks: {
@@ -269,8 +270,7 @@ export default class TripStatisticsView extends Smart {
             gridLines: {
               display: false,
               drawBorder: false
-            },
-            minBarLength: ChartConfiguration.MIN_BAR_LENGTH
+            }
           }],
         },
         legend: {
@@ -295,7 +295,9 @@ export default class TripStatisticsView extends Smart {
           data: this._tripEventsChartData.map((item) => item.timeSpend),
           backgroundColor: ChartConfiguration.BACKGROUND_COLOR,
           hoverBackgroundColor: ChartConfiguration.BACKGROUND_COLOR,
-          anchor: `start`
+          anchor: `start`,
+          barThickness: ChartConfiguration.BAR_THICKNESS,
+          minBarLength: ChartConfiguration.MIN_BAR_LENGTH
         }]
       },
       options: {
@@ -307,7 +309,7 @@ export default class TripStatisticsView extends Smart {
             color: ChartConfiguration.FONT_COLOR,
             anchor: `end`,
             align: `start`,
-            formatter: (val) => `${val}H`
+            formatter: (val) => `${val}D`
           }
         },
         title: {
@@ -332,8 +334,7 @@ export default class TripStatisticsView extends Smart {
             gridLines: {
               display: false,
               drawBorder: false
-            },
-            barThickness: ChartConfiguration.BAR_THICKNESS,
+            }
           }],
           xAxes: [{
             ticks: {
@@ -343,8 +344,7 @@ export default class TripStatisticsView extends Smart {
             gridLines: {
               display: false,
               drawBorder: false
-            },
-            minBarLength: ChartConfiguration.MIN_BAR_LENGTH
+            }
           }],
         },
         legend: {

@@ -6,7 +6,7 @@ import TripNewEventPresenter from "./trip-new-event-presenter";
 
 import {FILTER, RenderPosition, SortType, UpdateType, UserAction} from "../helpers/constants";
 import {createHiddenTitle, remove, render} from "../helpers/utils/dom-helpers";
-import {sortByField} from "../helpers/utils/helpers";
+import {sortByFieldAsc, sortByFieldDesc} from "../helpers/utils/helpers";
 
 export default class TripBoardPresenter {
   constructor(boardContainer, pointsModel, filterModel, api) {
@@ -59,9 +59,11 @@ export default class TripBoardPresenter {
     if (filteredPoints.length) {
       switch (this._activeSort) {
         case SortType.DAY:
-          return filteredPoints.sort(sortByField(`startTime`));
+          return filteredPoints.sort(sortByFieldAsc(`startTime`));
+        case SortType.TIME:
+          return filteredPoints.sort(sortByFieldDesc(`dueTime`));
         case SortType.PRICE:
-          return filteredPoints.sort(sortByField(`totalPrice`));
+          return filteredPoints.sort(sortByFieldDesc(`totalPrice`));
       }
     }
 

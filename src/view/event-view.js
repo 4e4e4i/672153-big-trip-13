@@ -1,8 +1,7 @@
 import dayjs from "dayjs";
 import Abstract from "./abstract";
 
-import {numberPad} from "../helpers/utils/helpers";
-import {EventType} from "../helpers/constants";
+import {EventType, TimeInMs} from "../helpers/constants";
 
 const createTripEventOffersTemplate = (offers) => {
   if (!offers.length) {
@@ -24,7 +23,7 @@ const createTripEventOffersTemplate = (offers) => {
 };
 
 export const createTripEventTemplate = (event) => {
-  const {type, destination, startTime, endTime, price, isFavorite, offers = []} = event;
+  const {type, destination, startTime, endTime, dueTime, price, isFavorite, offers = []} = event;
 
   const eventType = EventType[type];
   const checkedOffers = offers;
@@ -37,30 +36,30 @@ export const createTripEventTemplate = (event) => {
   const endTimeFormatted = endDate.format(`HH:mm`);
   const startTimeAttribute = `${startDateAttribute}T${startTimeFormatted}`;
   const endTimeAttribute = `${endDateAttribute}T${endTimeFormatted}`;
-  const differenceInMs = endTime - startTime;
   const differenceInHours = endDate.diff(startDate, `hour`);
   const getDurationOfEvent = (ms) => {
     const duration = new Date(ms);
-    const days = numberPad(duration.getDate() - 1, 2);
-    const hours = numberPad(duration.getHours(), 2);
-    const minutes = numberPad(duration.getMinutes(), 2);
+    const days = Math.trunc(duration / TimeInMs.DAY);
+    const hours = Math.trunc((duration % TimeInMs.DAY) / TimeInMs.HOUR);
+    const minutes = Math.round((duration % TimeInMs.HOUR) / TimeInMs.MINUTE);
     return {
       days,
       hours,
       minutes
     };
   };
-  const durationOfEvent = getDurationOfEvent(differenceInMs);
+  const durationOfEvent = getDurationOfEvent(dueTime);
+
   const getDurationText = (differenceHour, duration) => {
     const {days, hours, minutes} = duration;
 
-    if (differenceHour > 24) {
+    if (days > 0) {
       return `${days}D ${hours}H ${minutes}M`;
-    }
-    if (differenceHour <= 24 && hours >= 1) {
+    } else if (hours > 0) {
       return `${hours}H ${minutes}M`;
+    } else {
+      return `${minutes}M`;
     }
-    return `${minutes}M`;
   };
   const favoriteClassName = isFavorite
     ? `event__favorite-btn event__favorite-btn--active`
