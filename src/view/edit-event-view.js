@@ -395,7 +395,7 @@ export default class EditEventView extends Smart {
   _offersChangeStatusHandler({target}) {
     const changedOffer = target.dataset.offer;
     const availableOffersOfEvent = this._availableOffers[this._data.type];
-    let eventOffers = target.checked
+    const eventOffers = target.checked
       ? [...this._data.offers, availableOffersOfEvent.find(({offerId}) => offerId === changedOffer)]
       : this._data.offers.filter(({offerId}) => offerId !== changedOffer);
     this.updateData({
