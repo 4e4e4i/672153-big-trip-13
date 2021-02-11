@@ -1,6 +1,6 @@
 import Observer from "../helpers/utils/observer";
 
-import {addOfferId} from "../api";
+import {addOfferId} from "../api/api";
 
 const getTotalPrice = (price, offers) => {
   const offersPrice = offers.reduce((acc, item) => acc + item.price, 0);

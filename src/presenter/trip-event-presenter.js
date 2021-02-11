@@ -4,7 +4,8 @@ import EditEventView from "../view/edit-event-view";
 
 import {RenderPosition, UserAction, UpdateType} from "../helpers/constants";
 import {render, replace, remove} from "../helpers/utils/dom-helpers";
-import {isDateEqual, isEsc} from "../helpers/utils/helpers";
+import {isDateEqual, isEsc, isOnline} from "../helpers/utils/helpers";
+import {toast} from "../helpers/utils/toast/toast";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -134,6 +135,11 @@ export default class TripEventPresenter {
   }
 
   _handleEditClick() {
+    if (!isOnline()) {
+      toast(`You can't edit task offline`);
+      return;
+    }
+
     this._switchEventToForm();
     this._resetEditComponentData();
   }
@@ -153,6 +159,11 @@ export default class TripEventPresenter {
   }
 
   _handleFormSubmit(update) {
+    if (!isOnline()) {
+      toast(`You can't save task offline`);
+      return;
+    }
+
     const isMinorUpdate = !isDateEqual(this._tripEvent.startTime, update.startTime);
 
     this._changeData(
@@ -168,6 +179,11 @@ export default class TripEventPresenter {
   }
 
   _handleDeleteClick(point) {
+    if (!isOnline()) {
+      toast(`You can't delete task offline`);
+      return;
+    }
+
     this._changeData(
         UserAction.DELETE_POINT,
         UpdateType.MINOR,

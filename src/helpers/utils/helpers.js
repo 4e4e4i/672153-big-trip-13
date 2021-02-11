@@ -13,3 +13,5 @@ export const sortByFieldDesc = (fieldName) => (a, b) => a[fieldName] < b[fieldNa
 export const sortByFieldAsc = (fieldName) => (a, b) => a[fieldName] > b[fieldName] ? 1 : -1;
 
 export const isEsc = (evt) => evt.key === `Escape` || evt.key === `Esc`;
+
+export const isOnline = () => window.navigator.onLine;

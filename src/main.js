@@ -4,17 +4,25 @@ import TripBoardPresenter from "./presenter/trip-board-presenter";
 import TripFilterPresenter from "./presenter/trip-filter-presenter";
 import PointsModel from "./model/points-model";
 import FilterModel from "./model/filter-model";
-import Api from "./api";
+import Api from "./api/api";
+import Store from "./api/store.js";
+import Provider from "./api/provider.js";
 
 import {MenuItem, RenderPosition, UpdateType, FilterType} from "./helpers/constants";
 import {render, createHiddenTitle, remove} from "./helpers/utils/dom-helpers";
+import {isOnline} from "./helpers/utils/helpers";
+import {toast} from "./helpers/utils/toast/toast.js";
 
 const AUTHORIZATION = `Basic asldfkjlk3213dsaiii33ud`;
 const END_POINT = `https://13.ecmascript.pages.academy/big-trip`;
-
-const api = new Api(END_POINT, AUTHORIZATION);
+const STORE_PREFIX = `trip-project-localstorage`;
+const STORE_VER = `v13`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const pointsModel = new PointsModel();
+const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store, pointsModel);
 
 const filterModel = new FilterModel();
 
@@ -24,7 +32,7 @@ const siteHeaderElement = document.querySelector(`.page-header`);
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteMainContainer.querySelector(`.trip-events`);
 
-const tripBoardPresenter = new TripBoardPresenter(tripEventsElement, pointsModel, filterModel, api);
+const tripBoardPresenter = new TripBoardPresenter(tripEventsElement, pointsModel, filterModel, apiWithProvider);
 const tripFilterPresenter = new TripFilterPresenter(tripControlsElement, filterModel, pointsModel);
 const tripTabsElement = new TabsView();
 let statisticsComponent = null;
@@ -62,10 +70,14 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (e
   tripTabsElement.setMenuItem(MenuItem.TABLE);
   filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
   tripBoardPresenter.init();
+  if (!isOnline()) {
+    toast(`You can't create new task offline`);
+    return;
+  }
   tripBoardPresenter.createTask();
 });
 
-api.getData()
+apiWithProvider.getData()
   .then(({points, offers, destinations}) => {
     pointsModel.setOffers(offers);
     pointsModel.setDestinations(destinations);
@@ -77,4 +89,16 @@ api.getData()
     createTripMenu();
   });
 
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`);
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});
 
